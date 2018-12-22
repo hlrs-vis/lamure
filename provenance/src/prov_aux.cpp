@@ -5,7 +5,7 @@
 // Faculty of Media, Bauhaus-Universitaet Weimar
 // http://www.uni-weimar.de/medien/vr
 
-#include <lamure/prov/aux.h>
+#include <lamure/prov/prov_aux.h>
 
 #include <limits>
 
