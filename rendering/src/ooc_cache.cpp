@@ -1,10 +1,15 @@
 // Copyright (c) 2014-2018 Bauhaus-Universitaet Weimar
 // This Software is distributed under the Modified BSD License, see license.txt.
 //
-// Virtual Reality and Visualization Research Group 
+// Virtual Reality and Visualization Research Group
 // Faculty of Media, Bauhaus-Universitaet Weimar
 // http://www.uni-weimar.de/medien/vr
 
+#ifdef WIN32
+#undef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
 #include <lamure/ren/ooc_cache.h>
 
 namespace lamure
@@ -82,14 +87,24 @@ ooc_cache *ooc_cache::get_instance(Data_Provenance const &data_provenance)
             policy *policy = policy::get_instance();
             model_database *database = model_database::get_instance();
             // size_t out_of_core_budget_in_nodes = (policy->out_of_core_budget_in_mb()*1024*1024) / database->get_slot_size();
+            long freeram = 0;
+#ifdef WIN32
+            MEMORYSTATUSEX statex;
 
+            statex.dwLength = sizeof(statex);
+
+            GlobalMemoryStatusEx(&statex);
+            freeram = statex.ullAvailPhys;
+#else
             struct sysinfo info;
             sysinfo(&info);
+            freeram = info.freeram;
             // std::cout << "uptime: " << info.uptime << std::endl;
-            //std::cout << "freeram: " << info.freeram << std::endl;
+            // std::cout << "freeram: " << info.freeram << std::endl;
+#endif
 
             float safety = 0.75;
-            long ram_free_in_bytes = info.freeram * safety;
+            long ram_free_in_bytes = freeram * safety;
             long out_of_core_budget_in_bytes = policy->out_of_core_budget_in_mb() * 1024 * 1024;
 
             if(policy->out_of_core_budget_in_mb() == 0)
@@ -109,11 +124,13 @@ ooc_cache *ooc_cache::get_instance(Data_Provenance const &data_provenance)
             long node_size_total = database->get_primitives_per_node() * data_provenance.get_size_in_bytes() + database->get_slot_size();
             size_t out_of_core_budget_in_nodes = out_of_core_budget_in_bytes / node_size_total;
 
-            if(data_provenance.get_size_in_bytes() > 0) {
-              single_ = new ooc_cache(out_of_core_budget_in_nodes, data_provenance);
+            if(data_provenance.get_size_in_bytes() > 0)
+            {
+                single_ = new ooc_cache(out_of_core_budget_in_nodes, data_provenance);
             }
-            else {
-              single_ = new ooc_cache(out_of_core_budget_in_nodes);
+            else
+            {
+                single_ = new ooc_cache(out_of_core_budget_in_nodes);
             }
             is_instanced_ = true;
         }
@@ -138,14 +155,25 @@ ooc_cache *ooc_cache::get_instance()
             model_database *database = model_database::get_instance();
             // size_t out_of_core_budget_in_nodes = (policy->out_of_core_budget_in_mb()*1024*1024) / database->get_slot_size();
 
+            size_t freeram = 0;
+#ifdef WIN32
+            MEMORYSTATUSEX statex;
+
+            statex.dwLength = sizeof(statex);
+
+            GlobalMemoryStatusEx(&statex);
+            freeram = statex.ullAvailPhys;
+#else
             struct sysinfo info;
             sysinfo(&info);
+            freeram = info.freeram;
             // std::cout << "uptime: " << info.uptime << std::endl;
             // std::cout << "freeram: " << info.freeram << std::endl;
+#endif
 
             float safety = 0.75;
-            long ram_free_in_bytes = info.freeram * safety;
-            long out_of_core_budget_in_bytes = policy->out_of_core_budget_in_mb() * 1024 * 1024;
+            size_t ram_free_in_bytes = freeram * safety;
+            size_t out_of_core_budget_in_bytes = policy->out_of_core_budget_in_mb() * 1024 * 1024;
 
             if(policy->out_of_core_budget_in_mb() == 0)
             {
@@ -161,7 +189,7 @@ ooc_cache *ooc_cache::get_instance()
             {
                 std::cout << "##### " << policy->out_of_core_budget_in_mb() << " MB will be used for the out of core budget #####" << std::endl;
             }
-            long node_size_total = database->get_slot_size();
+            size_t node_size_total = database->get_slot_size();
             size_t out_of_core_budget_in_nodes = out_of_core_budget_in_bytes / node_size_total;
 
             single_ = new ooc_cache(out_of_core_budget_in_nodes);
@@ -215,9 +243,7 @@ void ooc_cache::register_node(const model_t model_id, const node_t node_id, cons
     }
 }
 
-char *ooc_cache::node_data(const model_t model_id, const node_t node_id) { 
-    return cache_data_ + index_->get_slot(model_id, node_id) * slot_size(); 
-}
+char *ooc_cache::node_data(const model_t model_id, const node_t node_id) { return cache_data_ + index_->get_slot(model_id, node_id) * slot_size(); }
 
 char *ooc_cache::node_data_provenance(const model_t model_id, const node_t node_id)
 {
@@ -226,9 +252,7 @@ char *ooc_cache::node_data_provenance(const model_t model_id, const node_t node_
     return cache_data_provenance_ + index_->get_slot(model_id, node_id) * database->get_primitives_per_node() * data_provenance.get_size_in_bytes();
 }
 
-const bool ooc_cache::is_node_resident_and_aquired(const model_t model_id, const node_t node_id) { 
-    return index_->is_node_aquired(model_id, node_id); 
-}
+const bool ooc_cache::is_node_resident_and_aquired(const model_t model_id, const node_t node_id) { return index_->is_node_aquired(model_id, node_id); }
 
 void ooc_cache::refresh()
 {

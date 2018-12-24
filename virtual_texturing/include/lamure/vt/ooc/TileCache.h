@@ -21,7 +21,8 @@ namespace vt {
     namespace ooc {
         class TileCache;
 
-        class TileCacheSlot {
+        class VIRTUAL_TEXTURING_DLL TileCacheSlot
+        {
         public:
             enum STATE{
                 FREE = 1,

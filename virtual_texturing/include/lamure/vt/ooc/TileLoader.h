@@ -12,7 +12,8 @@
 
 namespace vt {
     namespace ooc {
-        class TileLoader : public HeapProcessor{
+    class VIRTUAL_TEXTURING_DLL TileLoader : public HeapProcessor
+    {
         public:
             TileLoader();
 

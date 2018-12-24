@@ -63,9 +63,11 @@ add_library(${PROJECT_NAME} SHARED
 	${PROJECT_INCLUDES}
 	${PROJECT_SOURCES})
 
+
 add_library(${PROJECT_NAME}_s STATIC
         ${PROJECT_INCLUDES}
         ${PROJECT_SOURCES})
+target_compile_definitions(${PROJECT_NAME}_s PUBLIC -DVT_BUILD_STATIC )
 
 add_dependencies(${PROJECT_NAME} lamure_common)
 

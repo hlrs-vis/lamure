@@ -16,7 +16,8 @@
 
 namespace vt {
 
-    class Observable {
+    class VIRTUAL_TEXTURING_DLL Observable
+{
     protected:
         std::map<event_type, std::set<Observer*>> _events;
     public:

@@ -18,8 +18,10 @@ CutDatabase::CutDatabase(mem_slots_type *front, mem_slots_type *back) : DoubleBu
 
     for(size_t i = 0; i < _size_mem_interleaved; i++)
     {
-        _front->emplace_back(mem_slot_type{i, UINT64_MAX, nullptr, false, false});
-        _back->emplace_back(mem_slot_type{i, UINT64_MAX, nullptr, false, false});
+        mem_slot_type mst;
+        mst.position = i;
+        _front->emplace_back(mst);
+        _back->emplace_back(mst);
     }
 
     _cut_map = cut_map_type();

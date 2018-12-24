@@ -17,7 +17,7 @@
 
 namespace vt
 {
-class VTConfig
+class VIRTUAL_TEXTURING_DLL VTConfig
 {
   public:
     enum FORMAT_TEXTURE

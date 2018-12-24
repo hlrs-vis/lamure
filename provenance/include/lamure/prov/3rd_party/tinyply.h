@@ -18,6 +18,7 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#include <lamure/platform.h>
 
 namespace tinyply
 {
@@ -79,7 +80,7 @@ struct DataCursor
     bool realloc = false;
 };
 
-class PlyProperty
+class PROVENANCE_DLL PlyProperty
 {
     void parse_internal(std::istream &is);
 

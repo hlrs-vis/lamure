@@ -18,7 +18,9 @@
 #include <lamure/ren/model_database.h>
 #include <lamure/ren/platform.h>
 #include <lamure/ren/policy.h>
+#ifndef WIN32
 #include <sys/sysinfo.h>
+#endif
 
 namespace lamure
 {

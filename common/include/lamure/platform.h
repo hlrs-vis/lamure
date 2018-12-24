@@ -22,4 +22,14 @@
   #define COMMON_DLL
 #endif
 
+#if WIN32
+#if defined(LAMURE_PROVENANCE_LIBRARY)
+#define PROVENANCE_DLL __declspec(dllexport)
+#else
+#define PROVENANCE_DLL __declspec(dllimport)
+#endif
+#else
+#define PROVENANCE_DLL
+#endif
+
 #endif // COMMON_PLATFORM_H_

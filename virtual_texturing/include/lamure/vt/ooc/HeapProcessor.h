@@ -18,7 +18,8 @@
 
 namespace vt {
     namespace ooc {
-        class HeapProcessor {
+    class VIRTUAL_TEXTURING_DLL HeapProcessor
+    {
         protected:
             TileRequestPriorityQueue<uint32_t> _requests;
 

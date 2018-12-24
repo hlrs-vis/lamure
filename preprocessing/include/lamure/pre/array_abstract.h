@@ -20,7 +20,7 @@ namespace pre
 {
 
 template<typename T>
-class PREPROCESSING_DLL array_abstract
+class  array_abstract
 {
 public:
 

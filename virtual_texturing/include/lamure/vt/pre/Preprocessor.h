@@ -30,7 +30,8 @@
 
 namespace vt{
     namespace pre {
-        class Preprocessor{
+    class VIRTUAL_TEXTURING_DLL Preprocessor
+    {
         public:
             enum DEST_COMBINED{
                 NONE = 1,

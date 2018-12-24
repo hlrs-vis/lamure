@@ -9,10 +9,12 @@
 #define LAMURE_CIELABINDEX_H
 
 #include <lamure/vt/pre/Index.h>
+#include <lamure/vt/common.h>
 
 namespace vt {
     namespace pre {
-        class CielabIndex : public Index<uint32_t>{
+    class VIRTUAL_TEXTURING_DLL CielabIndex : public Index<uint32_t>
+    {
         private:
             uint32_t _convert(float val);
             float _convert(uint32_t val);

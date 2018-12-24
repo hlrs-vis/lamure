@@ -14,7 +14,7 @@
 namespace vt
 {
 class CutDatabase;
-class CutState
+class VIRTUAL_TEXTURING_DLL CutState
 {
   public:
     CutState(uint16_t depth);
@@ -36,7 +36,7 @@ class CutState
     mem_slots_index_type _mem_slots_locked;
 };
 
-class Cut : public DoubleBuffer<CutState>
+class VIRTUAL_TEXTURING_DLL Cut : public DoubleBuffer<CutState>
 {
   public:
     static Cut& init_cut(pre::AtlasFile * atlas);

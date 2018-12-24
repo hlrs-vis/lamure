@@ -18,7 +18,8 @@
 
 namespace vt {
     namespace pre {
-        class DeltaECalculator : public AtlasFile {
+    class VIRTUAL_TEXTURING_DLL DeltaECalculator : public AtlasFile
+    {
         public:
             explicit DeltaECalculator(const char *fileName);
             void calculate(size_t maxMemory);

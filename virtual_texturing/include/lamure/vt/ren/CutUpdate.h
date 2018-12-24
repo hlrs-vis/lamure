@@ -17,7 +17,7 @@ namespace vt
 {
 typedef std::set<id_type> id_set_type;
 
-class CutUpdate
+class VIRTUAL_TEXTURING_DLL CutUpdate
 {
   public:
     static CutUpdate &get_instance()

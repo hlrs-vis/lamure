@@ -35,13 +35,14 @@
 #define __EXIF_H
 
 #include <string>
+#include <lamure/platform.h>
 
 namespace easyexif
 {
 //
 // Class responsible for storing and parsing EXIF information from a JPEG blob
 //
-class EXIFInfo
+class PROVENANCE_DLL EXIFInfo
 {
   public:
     // Parsing function for an entire JPEG image buffer.

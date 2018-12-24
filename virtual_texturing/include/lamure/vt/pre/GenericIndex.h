@@ -15,7 +15,8 @@
 
 namespace vt{
     namespace pre {
-        class GenericIndex {
+    class VIRTUAL_TEXTURING_DLL GenericIndex
+    {
         private:
             uint64_t _imageWidth;
             uint64_t _imageHeight;

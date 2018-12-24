@@ -13,7 +13,7 @@
 #include <lamure/prov/sparse_octree.h>
 #include <lamure/prov/octree.h>
 
-#include <lamure/prov/aux.h>
+#include <lamure/prov/prov_aux.h>
 
 #include <scm/core/math.h>
 #include <scm/gl_core/math.h>

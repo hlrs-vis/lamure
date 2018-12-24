@@ -45,7 +45,7 @@
 #include <lamure/ren/controller.h>
 #include <lamure/pvs/pvs_database.h>
 #include <lamure/ren/ray.h>
-#include <lamure/prov/aux.h>
+#include <lamure/prov/prov_aux.h>
 #include <lamure/prov/octree.h>
 #include <lamure/vt/VTConfig.h>
 #include <lamure/vt/ren/CutDatabase.h>
@@ -2877,7 +2877,7 @@ void gui_selection_settings(settings& stgs){
       model_names_short.push_back(make_short_name(s));
     }
 
-    char* model_names[num_models_ + 1];
+    char** model_names = new char*[num_models_ + 1];
     for(unsigned i = 0; i < model_names_short.size(); ++i ){
       model_names[i] = ((char *) model_names_short[i].c_str());
     }
@@ -2958,6 +2958,8 @@ void gui_selection_settings(settings& stgs){
     }
 
     ImGui::End();
+
+    delete[] model_names;
 }
 
 

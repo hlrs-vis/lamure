@@ -15,6 +15,9 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <FreeImagePlus.h>
 
 #include <scm/gl_core/render_device/opengl/gl_core.h>

@@ -1,6 +1,8 @@
 #ifndef LAMURE_CAMERA_CUSTOM_H
 #define LAMURE_CAMERA_CUSTOM_H
-
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include "Frustum.h"
 #include <FreeImagePlus.h>
 #include <lamure/prov/camera.h>

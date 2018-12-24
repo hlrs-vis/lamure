@@ -9,6 +9,7 @@
 #define PROV_AUX_H_
 
 #include <lamure/types.h>
+#include <lamure/platform.h>
 
 #include <string>
 #include <fstream>
@@ -22,8 +23,9 @@ namespace prov {
 
 class octree;
 
-class aux {
-public:
+class PROVENANCE_DLL aux
+{
+  public:
 
     struct feature {
       uint32_t camera_id_;

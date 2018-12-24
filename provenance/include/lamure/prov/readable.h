@@ -41,7 +41,7 @@ class Readable
         is.seekg(0, std::ios::end);
         fsize = is.tellg() - fsize;
 
-        if(fsize != data_length)
+        if(fsize != (std::streampos)data_length)
         {
             std::stringstream istr;
             istr << fsize;

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <random>
 #include <cstring>
 #include <lamure/vt/pre/Preprocessor.h>
 #include <lamure/vt/pre/AtlasFile.h>
@@ -86,7 +87,9 @@ int process(const int argc, const char **argv){
 
     try {
         outPixelFormat = parsePixelFormat(argv[8]);
-    }catch(std::runtime_error &error){
+    }
+    catch(std::runtime_error &/*error*/)
+    {
         std::cout << "Invalid output pixel format given: \"" << argv[8] << "\"." << std::endl;
 
         return 1;
@@ -186,7 +189,9 @@ int info(const int argc, const char **argv){
 
     try {
         atlas = new AtlasFile(argv[0]);
-    }catch(std::runtime_error &error){
+    }
+    catch(std::runtime_error &/*error*/)
+    {
         std::cout << "Could not open file \"" << argv[0] << "\"." << std::endl;
 
         return 1;
@@ -225,7 +230,9 @@ int extract(const int argc, const char **argv){
 
     try {
         atlas = new AtlasFile(argv[0]);
-    }catch(std::runtime_error &error){
+    }
+    catch(std::runtime_error & /*error*/)
+    {
         std::cout << "Could not open file \"" << argv[0] << "\"." << std::endl;
 
         return 1;
@@ -283,7 +290,9 @@ int extract_raw(const int argc, const char **argv){
         }
 
         dataFile.write((char*)buffer, totalTiles * atlas->getTileByteSize());
-    }catch(std::runtime_error &error){
+    }
+    catch(std::runtime_error & /*error*/)
+    {
         std::cout << "Could not open file \"" << argv[0] << "\"." << std::endl;
 
         return 1;
@@ -309,7 +318,9 @@ int delta(const int argc, const char **argv){
 
     try {
         calculator = new DeltaECalculator(argv[0]);
-    }catch(std::runtime_error &error){
+    }
+    catch(std::runtime_error & /*error*/)
+    {
         std::cout << "Could not open file \"" << argv[0] << "\"." << std::endl;
 
         return 1;
@@ -335,7 +346,7 @@ int delta(const int argc, const char **argv){
 uint64_t createRandomImage(const char *fileName, uint64_t width, uint64_t height, Bitmap::PIXEL_FORMAT pxFormat, size_t maxBufferSize) {
     std::random_device random;
     std::default_random_engine randomEng(random());
-    std::uniform_int_distribution<uint8_t> randomGen(0, 255);
+    std::uniform_int_distribution<unsigned short> randomGen(0, 255);
 
     std::ofstream outFile(fileName, std::ios::trunc);
     size_t pxByteSize = Bitmap::pixelSize(pxFormat);
@@ -372,7 +383,7 @@ void benchmarkPreprocessing(const char *folderName, size_t tileWidth, size_t til
     benchmarkFile << "img_width;img_height;img_size_in_byte;tile_width;tile_height;tile_padding;levels;atlas_file_size_in_byte;max_mem_usage;process_time_in_ms;delta_time_in_ms;" << std::endl;
 
     for(size_t level = 0; level < levels; ++level){
-        size_t imgTileWidth = (1 << level);
+        size_t imgTileWidth = ((size_t)1 << level);
         uint64_t imgWidth = imgTileWidth * innerTileWidth;
         uint64_t imgHeight = imgTileWidth * innerTileHeight;
         std::string imgFileName = std::string(folderName) + "/img/l" + std::to_string(level + 1) + "_w" + std::to_string(imgWidth) + "_h" + std::to_string(imgHeight) + ".data";

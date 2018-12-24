@@ -114,7 +114,7 @@ endif(PKG_CONFIG_FOUND)
 # fallback if pkg-config method not work
 if(NOT GLFW3_FOUND)
 
-  find_path(GLFW3_INCLUDE_DIR glfw3.h GLFW/glfw3.h
+  find_path(GLFW3_INCLUDE_DIR GLFW/glfw3.h
     $ENV{GLFW_ROOT}
     HINTS
     ENV GLFW3_DIR
@@ -138,9 +138,8 @@ if(NOT GLFW3_FOUND)
     ${GLOBAL_EXT_DIR}/glfw/include
     ${GLFW_ROOT_DIR}/include/ # added by ptr
 )
-
   find_library(GLFW3_LIBRARY 
-    NAMES glfw3 libglfw3 glfw
+    NAMES glfw3 libglfw3 glfw glfw3dll
     HINTS
     ENV GLFW3_DIR
     PATH_SUFFIXES lib
@@ -155,12 +154,46 @@ if(NOT GLFW3_FOUND)
     /opt
     /opt/glfw3/current/lib
   )
+  
+IF(MSVC)
+  # VisualStudio needs a debug version
+  
+  find_library(GLFW3_LIBRARY_DEBUG
+    NAMES glfw3d libglfw3d glfwd glfw3dlld
+    HINTS
+    ENV GLFW3_DIR
+    PATH_SUFFIXES lib
+    PATHS
+    ~/Library/Frameworks
+    /Library/Frameworks
+    /usr/local
+    /usr
+    /sw
+    /opt/local
+    /opt/csw
+    /opt
+    /opt/glfw3/current/lib
+  )
+  
+  IF(GLFW3_LIBRARY_DEBUG AND GLFW3_LIBRARY)
+    SET(GLFW3_LIBRARIES optimized ${GLFW3_LIBRARY} debug ${GLFW3_LIBRARY_DEBUG} )
+    SET(GLFW_LIBRARIES optimized ${GLFW3_LIBRARY} debug ${GLFW3_LIBRARY_DEBUG} )
+  ENDIF(GLFW3_LIBRARY_DEBUG AND GLFW3_LIBRARY)
 
-  set(GLFW_INCLUDE_DIRS "${GLFW3_INCLUDE_DIR}")
+  FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW3 DEFAULT_MSG GLFW3_LIBRARY GLFW3_LIBRARY_DEBUG GLFW3_INCLUDE_DIR)
+
+  MARK_AS_ADVANCED(GLFW3_LIBRARY GLFW3_LIBRARY_DEBUG GLFW3_INCLUDE_DIR)
+  
+ELSE(MSVC)
+  
   set(GLFW_LIBRARIES "${GLFW3_LIBRARY}")
 
   include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-  find_package_handle_standard_args(GLFW3 DEFAULT_MSG GLFW3_LIBRARIES GLFW3_INCLUDE_DIR)
+  find_package_handle_standard_args(GLFW3 DEFAULT_MSG GLFW_LIBRARIES GLFW_INCLUDE_DIRS)
+  
+ENDIF(MSVC)
+
+  set(GLFW_INCLUDE_DIRS "${GLFW3_INCLUDE_DIR}")
 
 endif()
 

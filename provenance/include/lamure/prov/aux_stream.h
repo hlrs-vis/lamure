@@ -10,7 +10,8 @@
 
 
 #include <lamure/types.h>
-#include <lamure/prov/aux.h>
+#include <lamure/platform.h>
+#include <lamure/prov/prov_aux.h>
 
 #include <scm/core/math.h>
 #include <scm/gl_core/math.h>
@@ -25,7 +26,7 @@
 namespace lamure {
 namespace prov {
 
-class aux_stream
+class PROVENANCE_DLL aux_stream
 {
 
 public:

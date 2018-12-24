@@ -9,7 +9,9 @@
 #include <algorithm>
 #include <FreeImage.h>
 #include <vector>
+#ifndef WIN32
 #include <dirent.h>
+#endif
 #include <string.h>
 #include <fstream>
 #include <algorithm>
@@ -20,9 +22,10 @@
 #include <FreeImage.h>
 #include "GuillotineBinPack.h"
 #include "MaxRectsBinPack.h"
-#include <dirent.h>
 #include "GuillotineBinPack.h"
 
+#include <boost/filesystem.hpp>
+using namespace boost::filesystem;
 
 
 using namespace std;
@@ -115,6 +118,16 @@ void write_img(char const *name, pixel *data, int width, int height) {
 
 
 int getdir (string dir, vector<string> &files){
+    for(directory_iterator itr(dir); itr != directory_iterator(); ++itr)
+    {
+
+        std::string name = itr->path().filename().string();
+        if((name.substr(name.size() - 3)).compare("jpg") == 0 || (name.substr(name.size() - 3)).compare("png") == 0 || (name.substr(name.size() - 3)).compare("tif") == 0)
+        {
+            files.push_back(itr->path().filename().string());
+        }
+    }
+    /*
     DIR *dp;
     struct dirent *dirp;
     if((dp  = opendir(dir.c_str())) == NULL) {
@@ -132,7 +145,8 @@ int getdir (string dir, vector<string> &files){
             }
         }
     }
-    closedir(dp);
+    closedir(dp);*/
+
     return 0;
 }
 

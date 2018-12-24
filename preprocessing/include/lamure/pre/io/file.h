@@ -22,7 +22,7 @@ namespace lamure {
 namespace pre {
 
 template<typename T>
-class PREPROCESSING_DLL file
+class file
 {
 public:
     file() {}

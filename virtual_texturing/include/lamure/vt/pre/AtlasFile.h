@@ -15,12 +15,14 @@
 #include <lamure/vt/pre/Bitmap.h>
 #include <lamure/vt/pre/QuadTree.h>
 #include <lamure/vt/pre/CielabIndex.h>
+#include <lamure/vt/common.h>
 
 namespace vt{
     namespace pre{
         class OffsetIndex;
 
-        class AtlasFile {
+        class VIRTUAL_TEXTURING_DLL AtlasFile
+        {
         public:
             enum LAYOUT{
                 RAW = 1,

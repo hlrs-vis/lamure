@@ -15,7 +15,7 @@ using namespace std;
 
 namespace vt
 {
-class QuadTree
+class VIRTUAL_TEXTURING_DLL QuadTree
 {
   public:
 

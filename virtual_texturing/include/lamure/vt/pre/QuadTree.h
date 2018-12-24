@@ -12,10 +12,12 @@
 #include <cstdint>
 #include <cstddef>
 #include <algorithm>
+#include <lamure/vt/common.h>
 
 namespace vt{
     namespace pre {
-        class QuadTree {
+    class VIRTUAL_TEXTURING_DLL QuadTree
+    {
         public:
             enum NEIGHBOUR {
                 TOP = 1,

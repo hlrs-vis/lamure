@@ -18,7 +18,8 @@
 
 namespace vt{
     namespace ooc{
-        class TileRequestMap : public Observer {
+    class VIRTUAL_TEXTURING_DLL TileRequestMap : public Observer
+    {
         protected:
             std::map<std::pair<pre::AtlasFile*, uint64_t>, TileRequest*> _map;
             std::mutex _lock;

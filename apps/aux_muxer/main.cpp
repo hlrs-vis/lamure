@@ -6,7 +6,7 @@
 // http://www.uni-weimar.de/medien/vr
 
 #include <lamure/types.h>
-#include <lamure/prov/aux.h>
+#include <lamure/prov/prov_aux.h>
 #include <lamure/prov/octree.h>
 
 #include <scm/core/math.h>
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <map>
 
 using namespace std;

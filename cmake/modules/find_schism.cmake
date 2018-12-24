@@ -2,6 +2,7 @@
 # search paths
 ##############################################################################
 SET(SCHISM_INCLUDE_SEARCH_DIRS
+  $ENV{EXTERNLIBS}/schism/include
   ${GLOBAL_EXT_DIR}/schism/include
   ${GLOBAL_EXT_DIR}/include/schism
   ${SCHISM_INCLUDE_SEARCH_DIR}
@@ -9,6 +10,7 @@ SET(SCHISM_INCLUDE_SEARCH_DIRS
 )
 
 SET(SCHISM_LIBRARY_SEARCH_DIRS
+  $ENV{EXTERNLIBS}/schism/lib
   ${GLOBAL_EXT_DIR}/lib
   ${GLOBAL_EXT_DIR}/schism/lib
   ${SCHISM_LIBRARY_SEARCH_DIR}
@@ -25,7 +27,7 @@ IF ( NOT SCHISM_INCLUDE_DIRS )
 
     FOREACH(_SEARCH_DIR ${SCHISM_INCLUDE_SEARCH_DIRS})
         FIND_PATH(_CUR_SEARCH
-                NAMES scm_gl_core/src/scm/gl_core.h
+                NAMES scm_gl_core/src/scm/gl_core.h scm/gl_core.h
                 PATHS ${_SEARCH_DIR}
                 NO_DEFAULT_PATH)
         IF (_CUR_SEARCH)

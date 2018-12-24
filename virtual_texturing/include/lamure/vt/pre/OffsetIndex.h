@@ -13,7 +13,8 @@
 
 namespace vt {
     namespace pre {
-        class OffsetIndex : public Index<uint64_t>{
+    class VIRTUAL_TEXTURING_DLL OffsetIndex : public Index<uint64_t>
+    {
         private:
             const uint64_t EXISTS_BIT = 0x8000000000000000;
             AtlasFile::LAYOUT _layout;

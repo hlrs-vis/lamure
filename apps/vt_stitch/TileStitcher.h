@@ -13,6 +13,10 @@
 #include <chrono>
 #include <ctime>
 
+#ifndef WINDOWS_LEAN_AND_MEAN
+#define WINDOWS_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 #include <FreeImage.h>
 #include <FreeImagePlus.h>
 #include <experimental/filesystem>

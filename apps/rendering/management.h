@@ -22,6 +22,9 @@
 
 #include <GL/freeglut.h>
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <FreeImagePlus.h>
 
 #include <lamure/ren/ray.h>

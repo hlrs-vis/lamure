@@ -19,7 +19,7 @@ Scene::Scene(std::vector<lamure::prov::SparsePoint> &vector_point, std::vector<l
 
 bool Scene::update(float time_delta)
 {
-
+    return true;
 }
 
 void Scene::init(scm::shared_ptr<scm::gl::render_device> device, std::string const& image_directory)

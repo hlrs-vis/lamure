@@ -805,7 +805,7 @@ void Renderer::render_menu(Scene &scene)
     // const char* listbox_items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
 
     std::vector<std::string> vector_strings;
-    const char *listbox_items[scene.get_vector_camera().size()];
+    const char **listbox_items = new const char *[scene.get_vector_camera().size()];
     int index = 0;
     for(Camera_Custom &camera : scene.get_vector_camera())
     {
@@ -831,6 +831,7 @@ void Renderer::render_menu(Scene &scene)
             toggle_camera(scene);
         }
     }
+    delete[] listbox_items;
 
     if(ImGui::CollapsingHeader("Provenance overlay"))
     {

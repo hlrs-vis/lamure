@@ -9,6 +9,7 @@
 #define VT_OBSERVER_H
 
 #include <cstdint>
+#include <lamure/vt/common.h>
 
 namespace vt {
 
@@ -16,7 +17,8 @@ namespace vt {
 
     class Observable;
 
-    class Observer {
+    class VIRTUAL_TEXTURING_DLL Observer
+    {
     protected:
     public:
         Observer() = default;

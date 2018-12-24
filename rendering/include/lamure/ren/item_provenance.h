@@ -63,6 +63,7 @@ class Item_Provenance
             return sizeof(scm::math::vec3f);
             break;
         }
+        return 0;
     };
 
     type_item get_type() const { return _type; };

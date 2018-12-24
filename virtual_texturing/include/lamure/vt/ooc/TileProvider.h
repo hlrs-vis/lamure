@@ -21,7 +21,8 @@ namespace vt{
         typedef uint64_t id_type;
         typedef uint32_t priority_type;
 
-        class TileProvider {
+        class VIRTUAL_TEXTURING_DLL TileProvider
+        {
         protected:
             std::mutex _resourcesLock;
             std::set<pre::AtlasFile*> _resources;

@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2018 Bauhaus-Universitaet Weimar
 // This Software is distributed under the Modified BSD License, see license.txt.
 //
-// Virtual Reality and Visualization Research Group 
+// Virtual Reality and Visualization Research Group
 // Faculty of Media, Bauhaus-Universitaet Weimar
 // http://www.uni-weimar.de/medien/vr
 
@@ -14,6 +14,21 @@
 #include <map>
 #include <set>
 #include <vector>
+
+#if WIN32
+#ifndef VT_BUILD_STATIC
+#if defined(lamure_virtual_texturing_EXPORTS)
+#define VIRTUAL_TEXTURING_DLL __declspec(dllexport)
+#else
+#define VIRTUAL_TEXTURING_DLL __declspec(dllimport)
+#endif
+#else
+#define VIRTUAL_TEXTURING_DLL
+#endif
+#else
+#define VIRTUAL_TEXTURING_DLL
+#endif
+
 namespace vt
 {
 typedef uint64_t id_type;
@@ -40,6 +55,6 @@ typedef std::set<uint64_t> context_set_type;
 class Cut;
 typedef std::map<uint64_t, Cut *> cut_map_type;
 typedef std::pair<uint64_t, Cut *> cut_map_entry_type;
-}
+} // namespace vt
 
 #endif // VT_COMMON_H

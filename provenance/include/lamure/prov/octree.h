@@ -9,7 +9,8 @@
 #define PROV_OCTREE_H_
 
 #include <lamure/types.h>
-#include <lamure/prov/aux.h>
+#include <lamure/platform.h>
+#include <lamure/prov/prov_aux.h>
 
 #include <scm/core/math.h>
 
@@ -26,8 +27,9 @@ namespace lamure {
 namespace prov {
 
 
-class octree_node {
-public:
+class PROVENANCE_DLL octree_node
+{
+  public:
   octree_node()
     : idx_(0), child_mask_(0), child_idx_(0), min_(std::numeric_limits<float>::max()), max_(std::numeric_limits<float>::lowest()) {};
   octree_node(uint64_t _idx, uint32_t _child_mask, uint32_t _child_idx,
@@ -60,8 +62,9 @@ protected:
   std::set<uint32_t> fotos_;
 };
 
-class octree {
-public:
+class PROVENANCE_DLL octree
+{
+  public:
                       octree();
   virtual             ~octree();
 

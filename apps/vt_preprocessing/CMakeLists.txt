@@ -3,6 +3,7 @@
 
 include_directories(
         ${VT_INCLUDE_DIR}
+		${CMAKE_BINARY_DIR}
         )
 
 include_directories(SYSTEM ${SCHISM_INCLUDE_DIRS}

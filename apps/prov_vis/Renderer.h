@@ -113,9 +113,9 @@ class Renderer
     float _speed = 0.04f;
     float _line_density = 0.10f;
     float _heatmap_min = 0.00f;
-    float _heatmap_min_color[3] = {0.267004, 0.004874, 0.329415};
+    float _heatmap_min_color[3] = {0.267004f, 0.004874f, 0.329415f};
     float _heatmap_max = 1.00f;
-    float _heatmap_max_color[3] = {0.983868, 0.904867, 0.136897};
+    float _heatmap_max_color[3] = {0.983868f, 0.904867f, 0.136897f};
     float _speed_yaw = 30.0f;
     float _speed_pitch = 40.0f;
     bool _mode_is_ego = true;

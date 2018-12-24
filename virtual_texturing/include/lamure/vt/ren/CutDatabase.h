@@ -16,7 +16,7 @@
 namespace vt
 {
 class VTContext;
-class CutDatabase : DoubleBuffer<mem_slots_type>
+class VIRTUAL_TEXTURING_DLL CutDatabase : DoubleBuffer<mem_slots_type>
 {
   public:
     static CutDatabase &get_instance()

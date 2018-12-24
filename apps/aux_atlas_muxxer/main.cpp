@@ -6,7 +6,7 @@
 // http://www.uni-weimar.de/medien/vr
 
 #include <lamure/types.h>
-#include <lamure/prov/aux.h>
+#include <lamure/prov/prov_aux.h>
 #include <lamure/prov/octree.h>
 
 #include <scm/core/math.h>
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <string>
+#include <iterator>
 #include <map>
 
 char *get_cmd_option(char **begin, char **end, const std::string &option) {
@@ -136,7 +137,12 @@ int main(int argc, char *argv[]) {
     std::cout << "muxing atlas..." << std::endl;
     std::cout << "atlas width: " << atlas_width << std::endl;
     std::cout << "atlas height: " << atlas_height << std::endl;
-    lamure::prov::aux::atlas atlas{aux_in.get_num_views(), atlas_width, atlas_height, rotated};
+    lamure::prov::aux::atlas atlas;
+    atlas.atlas_height_ = atlas_height;
+    atlas.atlas_width_ = atlas_width;
+    atlas.num_atlas_tiles_ = aux_in.get_num_views();
+    atlas.rotated_ = rotated;
+
     aux_out.set_atlas(atlas);
 
     for (uint32_t i = 0; i < aux_in.get_num_views(); ++i) {
@@ -146,7 +152,13 @@ int main(int argc, char *argv[]) {
         std::cout << "Error: tile_map does not contain image file " << view.image_file_ << std::endl;
         exit(1);
       }
-      lamure::prov::aux::atlas_tile atlas_tile{i, it->second.x_, it->second.y_, it->second.width_, it->second.height_};
+      lamure::prov::aux::atlas_tile atlas_tile;
+      atlas_tile.atlas_tile_id_ = i;
+      atlas_tile.x_ = it->second.x_;
+      atlas_tile.y_ = it->second.y_;
+      atlas_tile.width_ = it->second.width_;
+      atlas_tile.height_ = it->second.height_;
+
       aux_out.add_atlas_tile(atlas_tile);
       view.atlas_tile_id_ = i;
       aux_out.add_view(view);

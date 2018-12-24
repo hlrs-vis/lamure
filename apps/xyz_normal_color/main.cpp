@@ -13,6 +13,7 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include <sstream>
 
 #include <memory>
 

@@ -1,16 +1,13 @@
 // Copyright (c) 2014-2018 Bauhaus-Universitaet Weimar
 // This Software is distributed under the Modified BSD License, see license.txt.
 //
-// Virtual Reality and Visualization Research Group 
+// Virtual Reality and Visualization Research Group
 // Faculty of Media, Bauhaus-Universitaet Weimar
 // http://www.uni-weimar.de/medien/vr
 
 #ifndef LAMURE_PROV_COMMON_H
 #define LAMURE_PROV_COMMON_H
 
-#include <lamure/prov/3rd_party/exif.h>
-#include <lamure/prov/3rd_party/pdqsort.h>
-#include <lamure/prov/3rd_party/tinyply.h>
 #include <algorithm>
 #include <assert.h>
 #include <boost/archive/text_iarchive.hpp>
@@ -21,6 +18,9 @@
 #include <boost/sort/spreadsort/float_sort.hpp>
 #include <boost/sort/spreadsort/spreadsort.hpp>
 #include <fstream>
+#include <lamure/prov/3rd_party/exif.h>
+#include <lamure/prov/3rd_party/pdqsort.h>
+#include <lamure/prov/3rd_party/tinyply.h>
 #include <memory>
 #include <stdio.h>
 #include <string>
@@ -28,8 +28,15 @@
 
 #include <scm/core.h>
 #include <scm/core/math.h>
+#ifdef WIN32
+#define BIG_ENDIAN 1
+#define LITTLE_ENDIAN 0
+#define BYTE_ORDER 0
+#define IS_BIG_ENDIAN (*(WORD *)"\0\x2" != 0x200)
+#endif
 
-namespace lamure {
+namespace lamure
+{
 namespace prov
 {
 // bool DEBUG = false;
@@ -98,6 +105,6 @@ static inline std::string &rtrim(std::string &s)
 
 static inline std::string &trim(std::string &s) { return ltrim(rtrim(s)); }
 
-}
-}
+} // namespace prov
+} // namespace lamure
 #endif // LAMURE_PROV_COMMON_H

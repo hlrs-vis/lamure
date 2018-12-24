@@ -15,7 +15,8 @@
 
 namespace vt{
     namespace ooc{
-        class TileRequest : /*public PriorityHeapContent<uint32_t>,*/ public Observable {
+    class VIRTUAL_TEXTURING_DLL TileRequest : /*public PriorityHeapContent<uint32_t>,*/ public Observable
+    {
         protected:
             pre::AtlasFile *_resource;
             uint64_t _id;

@@ -6,7 +6,7 @@
 // http://www.uni-weimar.de/medien/vr
 
 #include <lamure/prov/octree.h>
-#include <lamure/prov/aux.h>
+#include <lamure/prov/prov_aux.h>
 #include <lamure/bounding_box.h>
 
 #include <limits>

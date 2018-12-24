@@ -17,7 +17,7 @@
 
 #include <lamure/prov/3rd_party/exif.h>
 
-#include <lamure/prov/aux.h>
+#include <lamure/prov/prov_aux.h>
 
 #include <scm/core/math.h>
 #include <scm/gl_core/math.h>

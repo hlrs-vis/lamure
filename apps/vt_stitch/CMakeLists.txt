@@ -16,12 +16,16 @@ file(GLOB PROJECT_SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)
 
 ############################################################
 # Libraries
+if(WIN32)
+else(WIN32)
+set(CPPFILESYSTEM stdc++fs)# C++17
+endif(WIN32)
 
 target_link_libraries(${PROJECT_NAME}
         ${PROJECT_LIBS}
         ${REND_LIBRARY}
         optimized ${Boost_REGEX_LIBRARY_RELEASE} debug ${Boost_REGEX_LIBRARY_DEBUG}
-        stdc++fs # C++17
+        ${CPPFILESYSTEM} 
         )
 
 add_dependencies(${PROJECT_NAME} lamure_rendering lamure_common lamure_pvs_common)

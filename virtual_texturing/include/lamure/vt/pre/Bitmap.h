@@ -11,12 +11,14 @@
 
 #include <cstdint>
 #include <stdexcept>
+#include <lamure/vt/common.h>
 
 namespace vt{
     namespace pre{
         //#define BITMAP_ENABLE_SAFETY_CHECKS
 
-        class Bitmap {
+        class VIRTUAL_TEXTURING_DLL Bitmap
+    {
         public:
             enum PIXEL_FORMAT{
                 R8 = 1,

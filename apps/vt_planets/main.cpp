@@ -411,7 +411,7 @@ int main(int argc, char *argv[])
     while(!should_close())
     {
 #ifndef NDEBUG
-        std::chrono::time_point<std::chrono::high_resolution_clock> frame_start = std::chrono::system_clock::now();
+        std::chrono::time_point<std::chrono::high_resolution_clock> frame_start = std::chrono::high_resolution_clock::now();
 #endif
         glfwPollEvents();
 
