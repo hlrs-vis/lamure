@@ -45,6 +45,7 @@ set(PVS_COMMON_LIBRARY ${PROJECT_NAME})
 ############################################################
 # Libraries
 
+IF(MSVC)
 target_link_libraries(${PROJECT_NAME}
     ${COMMON_LIBRARY}
     ${SCHISM_LIBRARIES}
@@ -56,6 +57,17 @@ target_link_libraries(${PROJECT_NAME}
     optimized ${CGAL_LIBRARY} debug ${CGAL_LIBRARY_DEBUG}
     optimized ${CGAL_CORE_LIBRARY} debug ${CGAL_CORE_LIBRARY_DEBUG}
     )
+ELSE(MSVC)
+target_link_libraries(${PROJECT_NAME}
+    ${COMMON_LIBRARY}
+    ${SCHISM_LIBRARIES}
+    ${PROJECT_LIBS}
+    ${GMP_LIBRARY}
+    ${MPFR_LIBRARY}
+    optimized ${Boost_THREAD_LIBRARY_RELEASE}
+    optimized ${Boost_IOSTREAMS_LIBRARY_RELEASE}
+    )
+ENDIF(MSVC)
 
 IF(MSVC)
     target_link_libraries(${PROJECT_NAME} optimized ${ZLIB_LIBRARY_RELEASE} debug ${ZLIB_LIBRARY_DEBUG})

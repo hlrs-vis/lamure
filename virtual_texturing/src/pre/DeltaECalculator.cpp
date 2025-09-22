@@ -6,6 +6,7 @@
 // http://www.uni-weimar.de/medien/vr
 
 #include <lamure/vt/pre/DeltaECalculator.h>
+#include <cmath>
 
 namespace vt {
     namespace pre {

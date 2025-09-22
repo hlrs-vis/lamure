@@ -16,6 +16,7 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread/thread.hpp>
+#include <float.h>
 
 namespace lamure {
 namespace prov

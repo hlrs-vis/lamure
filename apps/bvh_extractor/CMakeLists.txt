@@ -18,7 +18,12 @@ InitApp(${CMAKE_PROJECT_NAME}_bvh_extractor)
 target_link_libraries(${PROJECT_NAME}
     ${PROJECT_LIBS}
     ${REND_LIBRARY}
+    optimized ${Boost_FILESYSTEM_LIBRARY_RELEASE}
+    optimized ${SCHISM_CORE_LIBRARY} #debug ${SCHISM_CORE_LIBRARY_DEBUG}
+    optimized ${SCHISM_GL_UTIL_LIBRARY}
+    optimized ${Boost_FILESYSTEM_LIBRARY_RELEASE}
     ${OpenGL_LIBRARIES} 
+    ${OPENGL_glx_LIBRARY} 
     ${GLUT_LIBRARY}
     )
 

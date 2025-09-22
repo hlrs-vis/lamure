@@ -14,6 +14,7 @@ InitApp(${CMAKE_PROJECT_NAME}_bvh_modifier)
 ############################################################
 # Libraries
 
+IF(MSVC)
 target_link_libraries(${PROJECT_NAME}
     ${PROJECT_LIBS}
     ${PREPROC_LIBRARY}
@@ -21,13 +22,22 @@ target_link_libraries(${PROJECT_NAME}
     ${GLUT_LIBRARY}
     optimized ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE} debug ${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG}
     )
+ELSE(MSVC)
+target_link_libraries(${PROJECT_NAME}
+    ${PROJECT_LIBS}
+    ${PREPROC_LIBRARY}
+    ${OpenGL_LIBRARIES} 
+    ${GLUT_LIBRARY}
+    optimized ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}
+    )
+ENDIF(MSVC)
 
 if (${LAMURE_USE_CGAL_FOR_NNI})
   target_link_libraries(${PROJECT_NAME}
       ${GMP_LIBRARY}
       ${MPFR_LIBRARY}
-      optimized ${CGAL_LIBRARY} debug ${CGAL_LIBRARY_DEBUG}
-      optimized ${CGAL_CORE_LIBRARY} debug ${CGAL_CORE_LIBRARY_DEBUG}
+      #optimized ${CGAL_LIBRARY} debug ${CGAL_LIBRARY_DEBUG}
+      #optimized ${CGAL_CORE_LIBRARY} debug ${CGAL_CORE_LIBRARY_DEBUG}
       )
 endif ()
 

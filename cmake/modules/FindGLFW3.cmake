@@ -186,7 +186,7 @@ IF(MSVC)
   
 ELSE(MSVC)
   
-  set(GLFW_LIBRARIES "${GLFW3_LIBRARY}")
+  set(GLFW_LIBRARIES "${GLFW3_LIBRARY} -lfreetype")
 
   include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
   find_package_handle_standard_args(GLFW3 DEFAULT_MSG GLFW_LIBRARIES GLFW_INCLUDE_DIRS)

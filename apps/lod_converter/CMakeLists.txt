@@ -20,5 +20,7 @@ target_link_libraries(${PROJECT_NAME}
     ${REND_LIBRARY}
     ${OpenGL_LIBRARIES} 
     ${GLUT_LIBRARY}
+    optimized ${SCHISM_CORE_LIBRARY} #debug ${SCHISM_CORE_LIBRARY_DEBUG}
+    ${OPENGL_glx_LIBRARY}
     )
 

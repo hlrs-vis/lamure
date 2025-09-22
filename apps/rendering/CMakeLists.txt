@@ -18,18 +18,38 @@ InitApp(${CMAKE_PROJECT_NAME}_rendering)
 
 ############################################################
 # Libraries
-
+IF(MSVC)
 target_link_libraries(${PROJECT_NAME}
     ${PROJECT_LIBS}
     ${REND_LIBRARY}
     ${PVS_COMMON_LIBRARY}
     ${OpenGL_LIBRARIES} 
     ${FREEGLUT_LIBRARY}
+    ${FREEIMAGE_LIBRARY}
+    -lfreetype
     optimized ${SCHISM_CORE_LIBRARY} debug ${SCHISM_CORE_LIBRARY_DEBUG}
     optimized ${SCHISM_GL_CORE_LIBRARY} debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
     optimized ${SCHISM_GL_UTIL_LIBRARY} debug ${SCHISM_GL_UTIL_LIBRARY_DEBUG}
+    optimized ${SCHISM_GL_CORE_LIBRARY} debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
     optimized ${Boost_REGEX_LIBRARY_RELEASE} debug ${Boost_REGEX_LIBRARY_DEBUG}
     )
+ELSE(MSVC)
+target_link_libraries(${PROJECT_NAME}
+    ${PROJECT_LIBS}
+    ${REND_LIBRARY}
+    ${PVS_COMMON_LIBRARY}
+    ${OpenGL_LIBRARIES} 
+    ${GLUT_glut_LIBRARY}
+    ${FREEIMAGE_LIBRARY}
+    -lfreetype
+    optimized ${SCHISM_CORE_LIBRARY}
+    optimized ${SCHISM_GL_CORE_LIBRARY}
+    optimized ${SCHISM_GL_UTIL_LIBRARY}
+    optimized ${SCHISM_GL_CORE_LIBRARY}
+    optimized ${Boost_REGEX_LIBRARY_RELEASE}
+    )
+ENDIF(MSVC)
+
 
 add_dependencies(${PROJECT_NAME} lamure_rendering lamure_common lamure_pvs_common)
 

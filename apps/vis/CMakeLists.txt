@@ -27,6 +27,7 @@ InitApp(${CMAKE_PROJECT_NAME}_vis)
 
 ############################################################
 # Libraries
+IF(MSVC)
 target_link_libraries(${PROJECT_NAME}
   ${PROJECT_LIBS}
   ${REND_LIBRARY}
@@ -44,4 +45,26 @@ target_link_libraries(${PROJECT_NAME}
   optimized ${SCHISM_GL_UTIL_LIBRARY} debug ${SCHISM_GL_UTIL_LIBRARY_DEBUG}
   optimized ${Boost_REGEX_LIBRARY_RELEASE} debug ${Boost_REGEX_LIBRARY_DEBUG}
 )
+ELSE(MSVC)
+target_link_libraries(${PROJECT_NAME}
+  ${PROJECT_LIBS}
+  ${REND_LIBRARY}
+  ${PVS_COMMON_LIBRARY}
+  ${PROV_LIBRARY}
+  ${VT_LIBRARY}
+  ${OpenGL_LIBRARY}
+  ${GLFW_LIBRARIES}
+  ${GLEW_LIBRARIES}
+  ${GLEW_LIBRARY}
+  ${OpenGL_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  ${FREEIMAGE_LIBRARY}
+  ${FREEIMAGEPLUS_LIBRARY}
+  optimized ${SCHISM_CORE_LIBRARY}
+  optimized ${SCHISM_GL_CORE_LIBRARY}
+  optimized ${SCHISM_GL_UTIL_LIBRARY}
+  optimized ${SCHISM_GL_CORE_LIBRARY}
+  optimized ${Boost_REGEX_LIBRARY_RELEASE}
+)
+ENDIF(MSVC)
 

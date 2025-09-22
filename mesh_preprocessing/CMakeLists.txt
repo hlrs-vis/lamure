@@ -47,11 +47,19 @@ set(MESH_PREPROC_LIBRARY ${PROJECT_NAME})
 ############################################################
 # Libraries
 
+IF (MSVC)
 target_link_libraries(${PROJECT_NAME}
         ${COMMON_LIBRARY}
         ${PROJECT_LIBS}
         optimized ${Boost_THREAD_LIBRARY_RELEASE} debug ${Boost_THREAD_LIBRARY_DEBUG}
         )
+ELSE(MSVC)
+target_link_libraries(${PROJECT_NAME}
+        ${COMMON_LIBRARY}
+        ${PROJECT_LIBS}
+        optimized ${Boost_THREAD_LIBRARY_RELEASE}
+        )
+ENDIF(MSVC)
 
 if (${LAMURE_USE_CGAL_FOR_NNI})
     target_link_libraries(${PROJECT_NAME}

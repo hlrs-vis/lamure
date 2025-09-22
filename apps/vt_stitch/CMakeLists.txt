@@ -24,7 +24,14 @@ endif(WIN32)
 target_link_libraries(${PROJECT_NAME}
         ${PROJECT_LIBS}
         ${REND_LIBRARY}
+        ${FREEIMAGE_LIBRARY}
         optimized ${Boost_REGEX_LIBRARY_RELEASE} debug ${Boost_REGEX_LIBRARY_DEBUG}
+                optimized ${SCHISM_CORE_LIBRARY} debug ${SCHISM_CORE_LIBRARY_DEBUG}
+        optimized ${SCHISM_GL_CORE_LIBRARY} debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
+        optimized ${SCHISM_GL_UTIL_LIBRARY} debug ${SCHISM_GL_UTIL_LIBRARY_DEBUG}
+        optimized ${SCHISM_GL_CORE_LIBRARY} debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
+        optimized ${SCHISM_CORE_LIBRARY} debug ${SCHISM_CORE_LIBRARY_DEBUG}
+        ${OPENGL_glx_LIBRARY}
         ${CPPFILESYSTEM} 
         )
 

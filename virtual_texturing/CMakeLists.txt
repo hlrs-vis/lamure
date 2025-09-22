@@ -85,18 +85,27 @@ set(VT_LIBRARY ${PROJECT_NAME})
 
 
 
+IF(MSVC)
 target_link_libraries(${PROJECT_NAME}
         ${COMMON_LIBRARY}
         ${PROJECT_LIBS}
         ${ImageMagick_LIBRARIES}
         optimized ${Boost_THREAD_LIBRARY_RELEASE} debug ${Boost_THREAD_LIBRARY_DEBUG})
+ELSE(MSVC)
+target_link_libraries(${PROJECT_NAME}
+        ${COMMON_LIBRARY}
+        ${PROJECT_LIBS}
+        ${ImageMagick_LIBRARIES}
+        optimized ${Boost_THREAD_LIBRARY_RELEASE} )
+ENDIF(MSVC)
 
 if (${LAMURE_USE_CGAL_FOR_NNI})
     target_link_libraries(${PROJECT_NAME}
             ${GMP_LIBRARY}
             ${MPFR_LIBRARY}
-            optimized ${CGAL_LIBRARY} debug ${CGAL_LIBRARY_DEBUG}
-            optimized ${CGAL_CORE_LIBRARY} debug ${CGAL_CORE_LIBRARY_DEBUG})
+      #      optimized ${CGAL_LIBRARY} debug ${CGAL_LIBRARY_DEBUG}
+      #      optimized ${CGAL_CORE_LIBRARY} debug ${CGAL_CORE_LIBRARY_DEBUG}
+       )
 endif ()
 
 ###############################################################################

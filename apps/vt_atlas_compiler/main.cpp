@@ -23,6 +23,7 @@
 #include "GuillotineBinPack.h"
 #include "MaxRectsBinPack.h"
 #include "GuillotineBinPack.h"
+#include <cmath>
 
 #include <boost/filesystem.hpp>
 using namespace boost::filesystem;

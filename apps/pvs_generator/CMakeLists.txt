@@ -28,9 +28,15 @@ target_link_libraries(${PROJECT_NAME}
     ${REND_LIBRARY}
     ${OpenGL_LIBRARIES} 
     ${GLUT_LIBRARY}
-    optimized ${SCHISM_CORE_LIBRARY} debug ${SCHISM_CORE_LIBRARY_DEBUG}
-    optimized ${SCHISM_GL_CORE_LIBRARY} debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
-    optimized ${SCHISM_GL_UTIL_LIBRARY} debug ${SCHISM_GL_UTIL_LIBRARY_DEBUG}
+    ${Boost_FILESYSTEM_LIBRARY_RELEASE}
+    ${FREEIMAGE_LIBRARY}
+    ${FREEIMAGEPLUS_LIBRARY}
+    ${GLFW_LIBRARIES}
+    -lfreetype
+    optimized ${SCHISM_GL_UTIL_LIBRARY}
+    optimized ${SCHISM_CORE_LIBRARY} #debug ${SCHISM_CORE_LIBRARY_DEBUG}
+    optimized ${SCHISM_GL_CORE_LIBRARY} #debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
+    optimized ${SCHISM_GL_UTIL_LIBRARY} #debug ${SCHISM_GL_UTIL_LIBRARY_DEBUG}
     )
 
 add_dependencies(${PROJECT_NAME} lamure_pvs_preprocessing lamure_common)

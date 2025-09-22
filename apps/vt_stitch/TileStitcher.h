@@ -16,7 +16,9 @@
 #ifndef WINDOWS_LEAN_AND_MEAN
 #define WINDOWS_LEAN_AND_MEAN
 #endif
+#ifdef WIN32
 #include <windows.h>
+#endif
 #include <FreeImage.h>
 #include <FreeImagePlus.h>
 #include <filesystem>

@@ -43,6 +43,7 @@ set(COMMON_LIBRARY ${PROJECT_NAME})
 ############################################################
 # Libraries
 
+if( MSVC)
 target_link_libraries(${PROJECT_NAME}
     ${PROJECT_LIBS}
     optimized ${Boost_TIMER_LIBRARY_RELEASE} debug ${Boost_TIMER_LIBRARY_DEBUG}
@@ -51,6 +52,16 @@ target_link_libraries(${PROJECT_NAME}
     optimized ${Boost_FILESYSTEM_LIBRARY_RELEASE} debug ${Boost_FILESYSTEM_LIBRARY_DEBUG}
     optimized ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE} debug ${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG}
     )
+ELSE(MSVC)
+target_link_libraries(${PROJECT_NAME}
+    ${PROJECT_LIBS}
+    optimized ${Boost_TIMER_LIBRARY_RELEASE}
+    optimized ${Boost_CHRONO_LIBRARY_RELEASE}
+    optimized ${Boost_SYSTEM_LIBRARY_RELEASE}
+    optimized ${Boost_FILESYSTEM_LIBRARY_RELEASE}
+    optimized ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}
+    )
+ENDIF(MSVC)
 
 set_source_files_properties(${PB_SOURCES} PROPERTIES GENERATED TRUE)
 

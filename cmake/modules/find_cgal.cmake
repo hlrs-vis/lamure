@@ -69,11 +69,11 @@ ENDFOREACH()
 
 find_path(CGAL_INCLUDE_DIR NAMES CGAL/CGAL_Ipelet_base.h PATHS ${CGAL_INCLUDE_SEARCH_DIRS})
 
-find_library(CGAL_LIBRARY NAMES ${CGAL_LIBRARY_FILENAME} PATHS ${CGAL_LIBRARY_SEARCH_DIRS})
-find_library(CGAL_CORE_LIBRARY NAMES ${CGAL_CORE_LIBRARY_FILENAME} PATHS ${CGAL_LIBRARY_SEARCH_DIRS})
+#find_library(CGAL_LIBRARY NAMES ${CGAL_LIBRARY_FILENAME} PATHS ${CGAL_LIBRARY_SEARCH_DIRS})
+#find_library(CGAL_CORE_LIBRARY NAMES ${CGAL_CORE_LIBRARY_FILENAME} PATHS ${CGAL_LIBRARY_SEARCH_DIRS})
 
-get_filename_component(_CGAL_LIBRARY_DIR ${CGAL_LIBRARY} PATH)
-SET(CGAL_LIBRARY_DIR "${_CGAL_LIBRARY_DIR}/" CACHE PATH "Sets path to CGAL libraries")
+#get_filename_component(_CGAL_LIBRARY_DIR ${CGAL_LIBRARY} PATH)
+#SET(CGAL_LIBRARY_DIR "${_CGAL_LIBRARY_DIR}/" CACHE PATH "Sets path to CGAL libraries")
 
 
 IF (UNIX)
@@ -89,7 +89,8 @@ ENDIF()
 ##############################################################################
 # verify
 ##############################################################################
-IF ( CGAL_LIBRARY AND CGAL_INCLUDE_DIR)
+#IF ( CGAL_LIBRARY AND CGAL_INCLUDE_DIR)
+IF ( CGAL_INCLUDE_DIR)
   MESSAGE(STATUS "--  found matching CGAL version")
 ELSE ()
   MESSAGE(FATAL_ERROR "find_CGAL.cmake: unable to find CGAL library.")
