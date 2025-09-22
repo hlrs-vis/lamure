@@ -220,7 +220,8 @@ sort_and_split(surfel_mem_array& sa,
     if (parallelize) {
 #if WIN32
       // todo: find platform independent sort
-      Concurrency::parallel_sort(array.begin(),
+      //Concurrency::parallel_sort(array.begin(),
+        std::sort(array.begin(),
         array.begin() + sa.length(),
         surfel_ext::compare(split_axis));
 #else
@@ -242,7 +243,8 @@ sort_and_split(surfel_mem_array& sa,
     if (parallelize) {
 #if WIN32
       // todo: find platform independent sort
-      Concurrency::parallel_sort(sa.surfel_mem_data()->begin() + sa.offset(),
+      //Concurrency::parallel_sort(sa.surfel_mem_data()->begin() + sa.offset(),
+        std::sort(sa.surfel_mem_data()->begin() + sa.offset(),
         sa.surfel_mem_data()->begin() + sa.offset() + sa.length(),
         surfel::compare(split_axis));
 #else
@@ -261,7 +263,7 @@ sort_and_split(surfel_mem_array& sa,
   split_surfel_array<surfel_mem_array>(sa, out, box, split_axis, fan_factor);
 }
 
-/*
+
 void basic_algorithms::
 sort_and_split(surfel_disk_array& sa,
              splitted_array<surfel_disk_array>& out,
@@ -273,7 +275,7 @@ sort_and_split(surfel_disk_array& sa,
     external_sort::sort(sa, memory_limit, surfel::compare(split_axis));
     split_surfel_array<surfel_disk_array>(sa, out, box, split_axis, fan_factor);
 }
-*/
+
 
 template <class T>
 void basic_algorithms::

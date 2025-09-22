@@ -16,8 +16,7 @@
 namespace lamure {
 namespace pre {
 
-void format_xyz_prov::
-convert(const std::string& in_file, const std::string& out_file, bool xyz_rgb) {
+void format_xyz_prov::convert(const std::string& in_file, const std::string& out_file, bool xyz_rgb) {
   //only in-core
 
   std::ifstream input(in_file.c_str(), std::ios::in);
@@ -62,9 +61,6 @@ convert(const std::string& in_file, const std::string& out_file, bool xyz_rgb) {
 
   output.write(&data, 0, 0, data.size());
   output.close();
-
-
-
 
 }
 

@@ -6,9 +6,10 @@
 // http://www.uni-weimar.de/medien/vr
 
 #include <lamure/pre/node_serializer.h>
-
 #include <lamure/pre/serialized_surfel.h>
 #include <cstring>
+#include <windows.h>
+#include <psapi.h>
 
 namespace lamure
 {
@@ -180,8 +181,18 @@ write_node_streamed(const bvh_node &node)
         flush_surfel_buffer();
 }
 
-void node_serializer::
-flush_surfel_buffer()
+size_t get_current_rss()
+{
+    PROCESS_MEMORY_COUNTERS pmc;
+    if(GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc)))
+    {
+        // pmc.WorkingSetSize in Bytes
+        return pmc.WorkingSetSize / 1024 / 1024; // in MiB
+    }
+    return 0;
+}
+
+void node_serializer::flush_surfel_buffer()
 {
     if (surfel_buffer_.size()) {
         const size_t output_buffer_size = serialized_surfel::get_size() * surfels_per_node_ * surfel_buffer_.size();
@@ -191,11 +202,10 @@ flush_surfel_buffer()
                                                            surfel_buffer_.size() << " nodes (" <<
                                                            output_buffer_size / 1024 / 1024 << " MiB)");
 
-#pragma omp parallel for
+//#pragma omp parallel for
         for (size_t k = 0; k < surfel_buffer_.size(); ++k) {
             for (size_t i = 0; i < surfels_per_node_; ++i) {
-                char *buf = output_buffer + k * serialized_surfel::get_size() * surfels_per_node_ +
-                    i * serialized_surfel::get_size();
+                char *buf = output_buffer + k * serialized_surfel::get_size() * surfels_per_node_ + i * serialized_surfel::get_size();
                 if (i < surfel_buffer_[k]->size())
                     serialized_surfel(surfel_buffer_[k]->at(i)).serialize(buf);
                 else
@@ -212,6 +222,7 @@ flush_surfel_buffer()
         }
         surfel_buffer_.clear();
         delete[] output_buffer;
+
         stream_.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     }
 }

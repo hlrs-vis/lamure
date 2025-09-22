@@ -18,7 +18,7 @@ namespace pre
 {
 
 void format_xyz_grey::
-read(const std::string &filename, surfel_callback_funtion callback)
+read(const std::string &filename, surfel_callback_function callback)
 {
     std::ifstream xyz_file_stream(filename);
 
@@ -29,9 +29,9 @@ read(const std::string &filename, surfel_callback_funtion callback)
     std::string line;
 
     real pos[3];
-    float norm[3];
     unsigned int color[3];
-    real radius = 0.1f;
+    real radius = 1;
+    float norm[3];
 
     xyz_file_stream.seekg(0, std::ios::end);
     std::streampos end_pos = xyz_file_stream.tellg();
@@ -53,7 +53,7 @@ read(const std::string &filename, surfel_callback_funtion callback)
         sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> pos[0];
         sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> pos[1];
         sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> pos[2];
-        sstream >> color[0];
+        color[0] >> color[0];
         color[1] = color[0];
         color[2] = color[0];
         

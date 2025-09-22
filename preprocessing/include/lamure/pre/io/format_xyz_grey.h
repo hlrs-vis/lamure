@@ -28,7 +28,7 @@ public:
     }
 
 protected:
-    virtual void read(const std::string &filename, surfel_callback_funtion callback) override;
+    virtual void read(const std::string &filename, surfel_callback_function callback) override;
     virtual void write(const std::string &filename, buffer_callback_function callback) override;
 
 };

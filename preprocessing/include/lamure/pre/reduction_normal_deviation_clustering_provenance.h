@@ -15,6 +15,7 @@
 #include <lamure/bounding_box.h>
 #include <list>
 #include <vector>
+#include <string>
 
 namespace lamure
 {
@@ -23,12 +24,13 @@ namespace pre
 class PREPROCESSING_DLL reduction_normal_deviation_clustering_provenance : public reduction_strategy_provenance
 {
   public:
-    explicit reduction_normal_deviation_clustering_provenance() {}
+    explicit reduction_normal_deviation_clustering_provenance(const std::string &base_path) : reduction_strategy_provenance(base_path), base_path_(base_path) {}
 
     surfel_mem_array create_lod(real &reduction_error, const std::vector<surfel_mem_array *> &input, std::vector<LoDMetaData> &deviations, const uint32_t surfels_per_node,
                                 const bvh &tree, const size_t start_node_id) const override;
 
   private:
+    std::string base_path_;
     using value_index_pair = std::pair<real, uint16_t>;
 
     struct surfel_cluster_with_error

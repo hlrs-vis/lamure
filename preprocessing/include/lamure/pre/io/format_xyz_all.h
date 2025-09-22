@@ -16,10 +16,10 @@ namespace lamure
 namespace pre
 {
 
-class PREPROCESSING_DLL format_xyzall: public format_abstract
+class PREPROCESSING_DLL format_xyz_all: public format_abstract
 {
 public:
-    explicit format_xyzall()
+    explicit format_xyz_all()
         : format_abstract()
     {
         has_normals_ = true;
@@ -28,7 +28,7 @@ public:
     }
 
 protected:
-    virtual void read(const std::string &filename, surfel_callback_funtion callback) override;
+    virtual void read(const std::string &filename, surfel_callback_function callback) override;
     virtual void write(const std::string &filename, buffer_callback_function callback) override;
 
 };

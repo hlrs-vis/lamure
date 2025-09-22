@@ -21,7 +21,7 @@ namespace pre
 {
 
 void format_ply::
-read(const std::string &filename, surfel_callback_funtion callback)
+read(const std::string &filename, surfel_callback_function callback)
 {
     using namespace std::placeholders;
     typedef std::tuple<std::function<void()>, std::function<void()>> FuncTuple;

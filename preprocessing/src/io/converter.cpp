@@ -15,8 +15,7 @@ namespace pre
 {
 
 void converter::
-convert(const std::string &input_filename,
-        const std::string &output_filename)
+convert(const std::string &input_filename, const std::string &output_filename)
 {
     discarded_ = 0;
     flush_ready_ = false;
@@ -40,15 +39,16 @@ convert(const std::string &input_filename,
     };
 
     // output thread
-    std::thread tr([&]
-                   {
-                       out_format_.write(output_filename, buf_callback);
-                   });
+    std::thread tr([&] 
+        {
+            out_format_.write(output_filename, buf_callback);
+        });
 
     // read input
-    in_format_.read(input_filename,
-                    [&](const surfel &s)
-                    { this->append_surfel(s); });
+    in_format_.read(input_filename, [&](const surfel &s) 
+        { 
+            this->append_surfel(s);
+        });
 
     flush_buffer();
     {
@@ -59,15 +59,14 @@ convert(const std::string &input_filename,
     tr.join();
 
     if (discarded_ > 0) {
-        LOGGER_WARN("Discarded degenerate surfels: " <<
-                                                     discarded_);
+        LOGGER_WARN("Discarded degenerate surfels: " << discarded_);
     }
 }
 
 void converter::
-write_in_core_surfels_out(const surfel_vector &surf_vec,
-                          const std::string &output_filename)
+write_in_core_surfels_out(const surfel_vector &surf_vec, const std::string &output_filename)
 {
+    std::cout << "write_in_core_surfels_out" << std::endl;
     discarded_ = 0;
     flush_ready_ = false;
     flush_done_ = false;
@@ -76,6 +75,7 @@ write_in_core_surfels_out(const surfel_vector &surf_vec,
 
     auto buf_callback = [&](surfel_vector &surfels)
     {
+        std::cout << "buf_callback" << std::endl;
         std::unique_lock<std::mutex> lk(mtx_);
         cv_.wait(lk, [this]
         { return flush_ready_; });
@@ -91,17 +91,11 @@ write_in_core_surfels_out(const surfel_vector &surf_vec,
         return has_data;
     };
 
-    // output thread
-    std::thread tr([&]
-                   {
-                       out_format_.write(extended_output_filename, buf_callback);
-                   });
+    std::thread tr([&] { out_format_.write(extended_output_filename, buf_callback); });
 
-    // read input
     for (auto const &surf : surf_vec) {
         this->append_surfel(surfel(surf.pos(), surf.color()));
     }
-
 
     flush_buffer();
     {
@@ -110,16 +104,13 @@ write_in_core_surfels_out(const surfel_vector &surf_vec,
     }
     cv_.notify_one();
     tr.join();
-
-    if (discarded_ > 0) {
-        LOGGER_WARN("Discarded degenerate surfels: " <<
-                                                     discarded_);
-    }
+    if (discarded_ > 0) { LOGGER_WARN("Discarded degenerate surfels: " << discarded_); }
 }
 
 void converter::
 append_surfel(const surfel &surf)
 {
+    // std::cout << "append_surfel" << std::endl;
     if (is_degenerate(surf)) {
         ++discarded_;
         return;
@@ -160,8 +151,7 @@ void converter::
 flush_buffer()
 {
     if (!buffer_.empty()) {
-        LOGGER_TRACE("Flush buffer to disk. buffer size: " <<
-                                                           buffer_.size() << " surfels");
+        LOGGER_TRACE("Flush buffer to disk. buffer size: " << buffer_.size());
         {
             std::lock_guard<std::mutex> lk(mtx_);
             flush_ready_ = true;
@@ -181,9 +171,8 @@ flush_buffer()
 const bool converter::
 is_degenerate(const surfel &s) const
 {
-    return !std::isfinite(s.pos().x)
-        || !std::isfinite(s.pos().y)
-        || !std::isfinite(s.pos().z);
+    // std::cout << "is_degenerate" << std::endl;
+    return !std::isfinite(s.pos().x) || !std::isfinite(s.pos().y) || !std::isfinite(s.pos().z);
 }
 
 } // namespace pre

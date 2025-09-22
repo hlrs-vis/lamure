@@ -20,16 +20,15 @@ namespace pre
 class PREPROCESSING_DLL format_bin: public format_abstract
 {
 public:
-    explicit format_bin()
-        : format_abstract()
+    explicit format_bin(): format_abstract()
     {
-        has_normals_ = true;
-        has_radii_ = true;
+        has_normals_ = false;
+        has_radii_ = false;
         has_color_ = true;
     }
 
 protected:
-    virtual void read(const std::string &filename, surfel_callback_funtion callback);
+    virtual void read(const std::string &filename, surfel_callback_function callback);
     virtual void write(const std::string &filename, buffer_callback_function callback);
 
 };

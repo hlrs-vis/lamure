@@ -33,11 +33,15 @@ set(PROJECT_SOURCES ${MAIN_SRC} ${IO_SRC} ${PLY_SRC})
 set(PROJECT_INCLUDES ${MAIN_INC} ${MAIN_INL} ${IO_INC} ${PLY_INC})
 
 include_directories(${PROJECT_INCLUDE_DIR}
+        ${PROJECT_INCLUDE_DIR} 
         ${COMMON_INCLUDE_DIR}
         ${LAMURE_CONFIG_DIR}
         ${CGAL_INCLUDE_DIR}
         ${GMP_INCLUDE_DIR}
         ${MPFR_INCLUDE_DIR}
+        ${E57RefImpl_INCLUDE_DIR}
+        ${OSG_INCLUDE_DIR}
+        ${XERCES_INCLUDE_DIR}
         )
 
 include_directories(SYSTEM ${SCHISM_INCLUDE_DIRS}
@@ -66,6 +70,9 @@ target_link_libraries(${PROJECT_NAME}
         ${COMMON_LIBRARY}
         ${PROJECT_LIBS}
         optimized ${Boost_THREAD_LIBRARY_RELEASE} debug ${Boost_THREAD_LIBRARY_DEBUG}
+        optimized ${E57RefImpl_LIBRARY_RELEASE} debug ${E57RefImpl_LIBRARY_DEBUG}
+        optimized ${OSG_LIBRARY_RELEASE} debug ${OSG_LIBRARY_DEBUG}
+        optimized ${XERCES_LIBRARY_RELEASE} debug ${XERCES_LIBRARY_DEBUG}
         )
 
 if (${LAMURE_USE_CGAL_FOR_NNI})

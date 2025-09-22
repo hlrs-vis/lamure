@@ -18,7 +18,7 @@ namespace pre
 {
 
 void format_xyz::
-read(const std::string &filename, surfel_callback_funtion callback)
+read(const std::string &filename, surfel_callback_function callback)
 {
     std::ifstream xyz_file_stream(filename);
 
@@ -29,7 +29,7 @@ read(const std::string &filename, surfel_callback_funtion callback)
     std::string line;
 
     real pos[3];
-    unsigned int color[3];
+    uint8_t color[3];
 
     xyz_file_stream.seekg(0, std::ios::end);
     std::streampos end_pos = xyz_file_stream.tellg();
@@ -65,34 +65,35 @@ read(const std::string &filename, surfel_callback_funtion callback)
 void format_xyz::
 write(const std::string &filename, buffer_callback_function callback)
 {
-    std::ofstream xyz_file_stream(filename);
+    std::ofstream file(filename);
 
-    if (!xyz_file_stream.is_open())
+    if(!file.is_open())
         throw std::runtime_error("Unable to open file: " +
             filename);
 
     surfel_vector buffer;
-    size_t count = 0;
+    size_t counter = 0;
 
     while (true) {
         bool ret = callback(buffer);
         if (!ret)
             break;
 
-        for (const auto s: buffer) {
-            xyz_file_stream << std::setprecision(LAMURE_STREAM_PRECISION) 
+        for (auto const &s : buffer) {
+            file << std::setprecision(LAMURE_STREAM_PRECISION)
               << s.pos().x << " " 
               << s.pos().y << " " 
-              << s.pos().z << " "
+              << s.pos().z << " " 
               << int(s.color().r) << " " 
               << int(s.color().g) << " " 
               << int(s.color().b) << "\r\n";
+
         }
 
-        count += buffer.size();
+        counter += buffer.size();
     }
-    xyz_file_stream.close();
-    LOGGER_TRACE("Output surfels: " << count);
+    file.close();
+    LOGGER_TRACE("Output surfels: " << counter);
 }
 
 } // namespace pre

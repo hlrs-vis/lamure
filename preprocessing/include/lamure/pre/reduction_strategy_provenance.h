@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2018 Bauhaus-Universitaet Weimar
 // This Software is distributed under the Modified BSD License, see license.txt.
 //
-// Virtual Reality and Visualization Research Group 
+// Virtual Reality and Visualization Research Group
 // Faculty of Media, Bauhaus-Universitaet Weimar
 // http://www.uni-weimar.de/medien/vr
 
@@ -11,6 +11,7 @@
 #include <lamure/pre/bvh_node.h>
 #include <lamure/pre/surfel_mem_array.h>
 #include <sys/stat.h>
+#include <boost/filesystem.hpp>
 
 namespace lamure
 {
@@ -31,6 +32,8 @@ class reduction_strategy_provenance : public reduction_strategy
         float _debug_green;
         float _debug_blue;
     };
+
+    explicit reduction_strategy_provenance(const std::string &base_path) : base_path_(base_path) {}
 
     virtual ~reduction_strategy_provenance() {}
 
@@ -118,11 +121,12 @@ class reduction_strategy_provenance : public reduction_strategy
 
             is.close();
 
-            std::ofstream os("lod.meta", std::ios::out | std::ios::binary | std::ios::app);
+            std::string meta_filename = base_path_ + ".lod.meta";
+            std::ofstream os(meta_filename, std::ios::out | std::ios::binary | std::ios::app);
 
             if(os.is_open())
             {
-                    os.write(reinterpret_cast<char *>(&byte_buffer[0]), length_of_data);
+                os.write(reinterpret_cast<char *>(&byte_buffer[0]), length_of_data);
             }
             else
             {
@@ -130,19 +134,18 @@ class reduction_strategy_provenance : public reduction_strategy
             }
 
             os.close();
-
         }
         else
         {
             throw std::ios_base::failure("Can not open the " + sstr.str() + " file");
         }
-
         std::remove(sstr.str().c_str());
     }
 
     void pack_empties(size_t surfel_count)
     {
-        std::ofstream os("lod.meta", std::ios::out | std::ios::binary | std::ios::app);
+        std::string meta_filename = base_path_ + ".lod.meta";
+        std::ofstream os(meta_filename, std::ios::out | std::ios::binary | std::ios::app);
 
         if(os.is_open())
         {
@@ -174,6 +177,9 @@ class reduction_strategy_provenance : public reduction_strategy
 
         os.close();
     }
+
+  private:
+    std::string base_path_;
 };
 
 } // namespace pre

@@ -17,8 +17,8 @@ namespace lamure
 namespace pre
 {
 
-void format_xyzall::
-read(const std::string &filename, surfel_callback_funtion callback)
+void format_xyz_all::
+read(const std::string &filename, surfel_callback_function callback)
 {
     std::ifstream xyz_file_stream(filename);
 
@@ -29,9 +29,9 @@ read(const std::string &filename, surfel_callback_funtion callback)
     std::string line;
 
     real pos[3];
-    float norm[3];
-    unsigned int color[3];
+    uint8_t color[3];
     real radius;
+    float norm[3];
 
     xyz_file_stream.seekg(0, std::ios::end);
     std::streampos end_pos = xyz_file_stream.tellg();
@@ -53,29 +53,25 @@ read(const std::string &filename, surfel_callback_funtion callback)
         sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> pos[0];
         sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> pos[1];
         sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> pos[2];
-        sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> norm[0];
-        sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> norm[1];
-        sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> norm[2];
         sstream >> color[0];
         sstream >> color[1];
         sstream >> color[2];
         sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> radius;
+        sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> norm[0];
+        sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> norm[1];
+        sstream >> std::setprecision(LAMURE_STREAM_PRECISION) >> norm[2];
 
-        callback(surfel(vec3r(pos[0], pos[1], pos[2]),
-                        vec3b(color[0], color[1], color[2]),
-                        radius,
-                        vec3f(norm[0], norm[1], norm[2])));
+        callback(surfel(vec3r(pos[0], pos[1], pos[2]), vec3b(color[0], color[1], color[2]), radius, vec3f(norm[0], norm[1], norm[2])));
     }
-
     xyz_file_stream.close();
 }
 
-void format_xyzall::
+void format_xyz_all::
 write(const std::string &filename, buffer_callback_function callback)
 {
-    std::ofstream xyz_file_stream(filename);
+    std::ofstream file(filename);
 
-    if (!xyz_file_stream.is_open())
+    if(!file.is_open())
         throw std::runtime_error("Unable to open file: " +
             filename);
 
@@ -87,23 +83,24 @@ write(const std::string &filename, buffer_callback_function callback)
         if (!ret)
             break;
 
-        for (const auto s: buffer) {
-            xyz_file_stream << std::setprecision(LAMURE_STREAM_PRECISION) 
+        for(auto const &s : buffer)
+        {
+            file << std::setprecision(LAMURE_STREAM_PRECISION)
               << s.pos().x << " " 
               << s.pos().y << " " 
               << s.pos().z << " "
-              << s.normal().x << " "
-              << s.normal().y << " "
-              << s.normal().z << " "
               << int(s.color().r) << " " 
               << int(s.color().g) << " " 
-              << int(s.color().b) << " "
-              << s.radius() << "\r\n";
+              << int(s.color().b) << " " 
+              << s.radius() << " "
+              << s.normal().x << " " 
+              << s.normal().y << " " 
+              << s.normal().z << "\r\n";
         }
 
         count += buffer.size();
     }
-    xyz_file_stream.close();
+    file.close();
     LOGGER_TRACE("Output surfels: " << count);
 }
 

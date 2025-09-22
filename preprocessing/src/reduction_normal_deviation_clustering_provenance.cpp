@@ -61,8 +61,7 @@ surfel_ext reduction_normal_deviation_clustering_provenance::create_representati
     return surfel_ext{surfel(pos, vec3b((const uint8_t)col.x, (const uint8_t)col.y, (const uint8_t)col.z), radius, nml), prov()};
 }
 
-std::pair<vec3ui, vec3b> reduction_normal_deviation_clustering_provenance::compute_grid_dimensions(const std::vector<surfel_mem_array *> &input, const bounding_box &bounding_box,
-                                                                                        const uint32_t surfels_per_node) const
+std::pair<vec3ui, vec3b> reduction_normal_deviation_clustering_provenance::compute_grid_dimensions(const std::vector<surfel_mem_array *> &input, const bounding_box &bounding_box, const uint32_t surfels_per_node) const
 {
     uint16_t max_axis_ratio = 1000;
 

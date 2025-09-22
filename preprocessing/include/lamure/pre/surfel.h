@@ -24,7 +24,7 @@ class PREPROCESSING_DLL surfel /*final*/
   public:
     using compare_function = std::function<bool(const surfel &left, const surfel &right)>;
 
-    surfel(const vec3r &pos = vec3r(0.0), const vec3b &color = vec3b(0), const real radius = 0.0, const vec3f &normal = vec3f(0.f), const float ncc = 0)
+    surfel(const vec3r &pos = vec3r(0.0), const vec3b &color = vec3b(0), const real radius = 1.0, const vec3f &normal = vec3f(0.f)) //,const float ncc = 0
         : pos_(pos), color_(color), radius_(radius), normal_(normal)//, ncc_(ncc)
     {
     }

@@ -54,6 +54,11 @@ class PREPROCESSING_DLL bvh
     {
     }
 
+    bvh(size_t memory_limit, size_t buffer_size, rep_radius_algorithm rep_algo, uint32_t max_threads = 0)
+        : memory_limit_(memory_limit), buffer_size_(buffer_size), rep_radius_algo_(rep_algo), max_threads_(max_threads)
+    {
+    }
+
     virtual ~bvh() {}
 
     bvh(const bvh &other) = delete;
@@ -93,7 +98,7 @@ class PREPROCESSING_DLL bvh
      */
     std::pair<node_id_type, node_id_type> get_node_ranges(const uint32_t depth) const;
 
-    std::vector<std::pair<surfel_id_t, real>> get_nearest_neighbours(const surfel_id_t target_surfel, const uint32_t num_neighbours, const bool do_local_search = false) const;
+    std::vector<std::pair<surfel_id_t, real>> get_nearest_neighbours(const surfel_id_t target_surfel, const uint32_t num_neighbours, const bool do_local_search = true) const;
 
     std::vector<std::pair<surfel_id_t, real>> get_nearest_neighbours_in_nodes(const surfel_id_t target_surfel, const std::vector<node_id_type> &target_nodes, const uint32_t num_neighbours) const;
 
@@ -151,6 +156,7 @@ class PREPROCESSING_DLL bvh
     void spawn_compute_bounding_boxes_upsweep_jobs(const uint32_t first_node_of_level, const uint32_t last_node_of_level, const int32_t level);
     void spawn_split_node_jobs(size_t &slice_left, size_t &slice_right, size_t &new_slice_left, size_t &new_slice_right, const uint32_t level);
 
+
     void thread_remove_outlier_jobs(const uint32_t start_marker, const uint32_t end_marker, const uint32_t num_outliers, const uint16_t num_neighbours,
                                     std::vector<std::pair<surfel_id_t, real>> &intermediate_outliers_for_thread);
     void thread_compute_attributes(const uint32_t start_marker, const uint32_t end_marker, const bool update_percentage, const normal_computation_strategy &normal_strategy,
@@ -165,6 +171,9 @@ class PREPROCESSING_DLL bvh
   private:
     surfel_vector resampled_leaf_level_;
     std::mutex resample_mutex_;
+    std::mutex log_mutex_;
+    std::mutex error_mutex_;
+    std::vector<std::string> error_list_;
 
     atomic_counter<uint32_t> working_queue_head_counter_;
 
@@ -186,6 +195,7 @@ class PREPROCESSING_DLL bvh
     size_t memory_limit_;
     size_t buffer_size_;
     rep_radius_algorithm rep_radius_algo_;
+    uint32_t max_threads_;
 
     vec3r translation_ = vec3r(0.0); ///< translation of surfels
 

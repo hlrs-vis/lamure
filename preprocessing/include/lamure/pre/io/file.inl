@@ -99,6 +99,12 @@ get_size() const
     return len / sizeof(T);
 }
 
+template <typename T>
+void file<T>::append(const std::vector<T> *data)
+{
+    append(data, 0, data->size());
+}
+
 template<typename T>
 void file<T>::
 append(const std::vector<T> *data,
@@ -112,23 +118,35 @@ append(const std::vector<T> *data,
     assert(offset_in_mem + length <= data->size());
 
     stream_.seekp(0, stream_.end);
-    stream_.write(reinterpret_cast<char *>(
-                      const_cast<T *>(&(*data)[offset_in_mem])),
-                  length * sizeof(T));
+    stream_.write(reinterpret_cast<char *>(const_cast<T *>(&(*data)[offset_in_mem])), length * sizeof(T));
 
     if (stream_.fail() || stream_.bad()) {
-        LOGGER_ERROR("append failed. file: \"" << file_name_ <<
-                                               "\". (mem offset: " << offset_in_mem <<
+        LOGGER_ERROR("append failed. file: \"" << file_name_ << "\". (mem offset: " << offset_in_mem <<
                                                ", len: " << length << "). " << strerror(errno));
     }
     stream_.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 }
 
-template<typename T>
-void file<T>::
-append(const std::vector<T> *data)
+template <typename T>
+void file<T>::write(const T &srfl, const size_t pos_in_file)
 {
-    append(data, 0, data->size());
+    write_data(reinterpret_cast<char *>(const_cast<T *>(&srfl)), pos_in_file, 1);
+}
+
+template <typename T>
+void file<T>::write_data(char *data, const size_t offset_in_file, const size_t length)
+{
+    assert(is_open());
+
+    std::lock_guard<std::mutex> lock(read_write_mutex_);
+    stream_.seekp(offset_in_file * sizeof(T));
+    stream_.write(data, length * sizeof(T));
+
+    if(stream_.fail() || stream_.bad())
+    {
+        LOGGER_ERROR("write failed. file: \"" << file_name_ << "\". (offset: " << offset_in_file << ", len: " << length << "). " << strerror(errno));
+    }
+    stream_.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 }
 
 template<typename T>
@@ -141,17 +159,7 @@ write(const std::vector<T> *data,
     assert(length > 0);
     assert(offset_in_mem + length <= data->size());
 
-    write_data(reinterpret_cast<char *>(
-                   const_cast<T *>(&(*data)[offset_in_mem])),
-               offset_in_file, length);
-}
-
-template<typename T>
-void file<T>::
-write(const T &srfl, const size_t pos_in_file)
-{
-    write_data(reinterpret_cast<char *>(const_cast<T *>(&srfl)),
-               pos_in_file, 1);
+    write_data(reinterpret_cast<char *>(const_cast<T *>(&(*data)[offset_in_mem])), offset_in_file, length);
 }
 
 template<typename T>
@@ -175,24 +183,6 @@ read(const size_t pos_in_file) const
     T s;
     read_data(reinterpret_cast<char *>(&s), pos_in_file, 1);
     return s;
-}
-
-template<typename T>
-void file<T>::
-write_data(char *data, const size_t offset_in_file, const size_t length)
-{
-    assert(is_open());
-
-    std::lock_guard<std::mutex> lock(read_write_mutex_);
-    stream_.seekp(offset_in_file * sizeof(T));
-    stream_.write(data, length * sizeof(T));
-
-    if (stream_.fail() || stream_.bad()) {
-        LOGGER_ERROR("write failed. file: \"" << file_name_ <<
-                                              "\". (offset: " << offset_in_file <<
-                                              ", len: " << length << "). " << strerror(errno));
-    }
-    stream_.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 }
 
 template<typename T>

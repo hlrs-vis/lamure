@@ -25,9 +25,10 @@ class PREPROCESSING_DLL format_abstract
 public:
 
     friend class converter;
+    friend class merger;
     typedef std::function<void( const surfel
     &)>
-    surfel_callback_funtion;
+    surfel_callback_function;
     typedef std::function<bool(surfel_vector & )> buffer_callback_function;
 
     explicit format_abstract()
@@ -48,7 +49,7 @@ public:
 
 protected:
 
-    virtual void read(const std::string &filename, surfel_callback_funtion callback) = 0;
+    virtual void read(const std::string &filename, surfel_callback_function callback) = 0;
     virtual void write(const std::string &filename, buffer_callback_function callback) = 0;
 
     bool has_normals_;

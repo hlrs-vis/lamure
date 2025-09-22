@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 Bauhaus-Universitaet Weimar
+﻿// Copyright (c) 2014-2018 Bauhaus-Universitaet Weimar
 // This Software is distributed under the Modified BSD License, see license.txt.
 //
 // Virtual Reality and Visualization Research Group 
@@ -198,7 +198,7 @@ void bvh::downsweep(
 {
     assert(state_ == state_type::empty);
 
-    size_t in_core_surfel_capacity = memory_limit_ / sizeof(surfel);
+    size_t in_core_surfel_capacity = std::floor((memory_limit_*1024*1024*1024) / sizeof(surfel));
 
     size_t disk_leaf_destination = 0, slice_left = 0, slice_right = 0;
 
@@ -233,8 +233,6 @@ void bvh::downsweep(
       LOGGER_INFO("Input WITH PROVENANCE: " << prov_file_disk_access->file_name());
       LOGGER_INFO("Output WITH PROVENANCE: " << prov_leaf_level_access->file_name());
     }
-
-
     LOGGER_INFO("Total number of surfels: " << input.length());
 
     // compute depth at which we can switch to in-core
@@ -245,7 +243,7 @@ void bvh::downsweep(
       LOGGER_ERROR("The dataset does not fit in the specified memory budget. Use flag -m and choose more gigabytes");
     }
 
-    //LOGGER_INFO("Tree depth to switch in-core: " << final_depth);
+    LOGGER_INFO("Tree depth to switch in-core: " << final_depth);
 
     // construct root node
     nodes_[0] = bvh_node(0, 0, bounding_box(), input);
@@ -304,7 +302,7 @@ void bvh::downsweep(
     if (final_depth != 0) {
         LOGGER_ERROR("out-of-core NOT SUPPORTED");
     }
-    /*
+    
     for(uint32_t level = 0; level < final_depth; ++level)
     {
         LOGGER_TRACE("Process out-of-core level: " << level);
@@ -337,11 +335,11 @@ void bvh::downsweep(
 
             // percent counter
             ++processed_nodes;
-            uint8_t new_percent_processed = (uint8_t)((float)(processed_nodes / first_leaf_ * 100));
+            uint8_t new_percent_processed = (uint8_t)((float(processed_nodes) / float(first_leaf_)) * 100.0f);
             if(percent_processed != new_percent_processed)
             {
                 percent_processed = new_percent_processed;
-                // std::cout << "\r" << (uint8_t)percent_processed << "% processed" << std::flush;
+                std::cout << "\r" << (uint8_t)percent_processed << "% procesed" << std::flush;
             }
         }
 
@@ -349,7 +347,7 @@ void bvh::downsweep(
         slice_left = new_slice_left;
         slice_right = new_slice_right;
     }
-*/
+
     // construct next level in-core
     for(size_t nid = slice_left; nid <= slice_right; ++nid)
     {
@@ -372,7 +370,6 @@ void bvh::downsweep(
         prov_file_disk_access->close();
     }
     state_ = state_type::after_downsweep;
-
 }
 
 void bvh::downsweep_subtree_in_core(const bvh_node &node, size_t &disk_leaf_destination, uint32_t &processed_nodes, uint8_t &percent_processed, 
@@ -431,7 +428,7 @@ void bvh::compute_normal_and_radius(const bvh_node *source_node, const normal_co
 
             uint16_t num_nearest_neighbours_to_search = std::max(radius_computation_strategy.number_of_neighbours(), normal_computation_strategy.number_of_neighbours());
 
-            auto const &max_nearest_neighbours = get_nearest_neighbours(surfel_id_t(source_node->node_id(), k), num_nearest_neighbours_to_search);
+            auto const &max_nearest_neighbours = get_nearest_neighbours(surfel_id_t(source_node->node_id(), k), num_nearest_neighbours_to_search, true);
             // compute radius
             real radius = radius_computation_strategy.compute_radius(*this, surfel_id_t(source_node->node_id(), k), max_nearest_neighbours);
 
@@ -486,6 +483,7 @@ void bvh::get_descendant_nodes(const node_id_type node, std::vector<node_id_type
 
 std::vector<std::pair<surfel_id_t, real>> bvh::get_nearest_neighbours(const surfel_id_t target_surfel, const uint32_t number_of_neighbours, const bool do_local_search) const
 {
+    //std::cout << "bvh::get_nearest_neighbours" << std::endl;
     node_id_type current_node = target_surfel.node_idx;
     std::unordered_set<size_t> processed_nodes;
     vec3r center = nodes_[target_surfel.node_idx].mem_array().read_surfel_ref(target_surfel.surfel_idx).pos();
@@ -703,6 +701,7 @@ std::vector<std::pair<surfel_id_t, real>> bvh::get_natural_neighbours(surfel_id_
 #ifdef LAMURE_USE_CGAL_FOR_NNI
 std::vector<std::pair<uint32_t, real>> bvh::extract_approximate_natural_neighbours(vec3r const &point_of_interest, std::vector<vec3r> const &nn_positions) const
 {
+    std::cout << "bvh::extract_approximate_natural_neighbours" << std::endl;
     std::vector<std::pair<uint32_t, real>> natural_neighbour_ids;
     uint32_t num_input_neighbours = nn_positions.size();
     // compute best fit plane
@@ -832,9 +831,10 @@ std::vector<std::pair<surfel, real>> bvh::get_locally_natural_neighbours(std::ve
 
 void bvh::spawn_create_lod_jobs(const uint32_t first_node_of_level, const uint32_t last_node_of_level, const reduction_strategy &reduction_strgy, const bool resample)
 {
-    uint32_t const num_threads = std::thread::hardware_concurrency();
+    uint32_t const hw = std::thread::hardware_concurrency();
+    uint32_t const num_threads = (max_threads_ > 0) ? std::min(max_threads_, hw) : hw;
 
-    working_queue_head_counter_.initialize(first_node_of_level); // let the threads fetch a node idx
+    working_queue_head_counter_.initialize(first_node_of_level);
     std::vector<std::thread> threads;
 
     for(uint32_t thread_idx = 0; thread_idx < num_threads; ++thread_idx)
@@ -852,8 +852,9 @@ void bvh::spawn_create_lod_jobs(const uint32_t first_node_of_level, const uint32
 void bvh::spawn_compute_attribute_jobs(const uint32_t first_node_of_level, const uint32_t last_node_of_level, const normal_computation_strategy &normal_strategy,
                                        const radius_computation_strategy &radius_strategy, const bool is_leaf_level)
 {
-    uint32_t const num_threads = std::thread::hardware_concurrency();
-    working_queue_head_counter_.initialize(first_node_of_level); // let the threads fetch a node idx
+    uint32_t const hw = std::thread::hardware_concurrency();
+    uint32_t const num_threads = (max_threads_ > 0) ? std::min(max_threads_, hw) : hw;
+    working_queue_head_counter_.initialize(first_node_of_level);
     std::vector<std::thread> threads;
 
     for(uint32_t thread_idx = 0; thread_idx < num_threads; ++thread_idx)
@@ -871,7 +872,8 @@ void bvh::spawn_compute_attribute_jobs(const uint32_t first_node_of_level, const
 
 void bvh::spawn_compute_bounding_boxes_downsweep_jobs(const uint32_t slice_left, const uint32_t slice_right)
 {
-    uint32_t const num_threads = std::thread::hardware_concurrency();
+    uint32_t const hw = std::thread::hardware_concurrency();
+    uint32_t const num_threads = (max_threads_ > 0) ? std::min(max_threads_, hw) : hw;
     working_queue_head_counter_.initialize(0); // let the threads fetch a local thread idx
     std::vector<std::thread> threads;
 
@@ -1064,8 +1066,6 @@ void bvh::thread_create_lod(const uint32_t start_marker, const uint32_t end_mark
         {
             std::vector<surfel_mem_array> resampled_arrays;
             std::vector<surfel_mem_array *> input_mem_arrays;
-
-            // simplified data will be stored here
             surfel_mem_array reduction_result = surfel_mem_array(std::make_shared<surfel_vector>(surfel_vector()), 0, 0);
 
             if(do_resample)
@@ -1093,7 +1093,7 @@ void bvh::thread_create_lod(const uint32_t start_marker, const uint32_t end_mark
 
                     input_mem_arrays.push_back(&child_node->mem_array());
                     child_has_provenance = child_node->has_provenance();
-                }                
+                }
                 if (child_has_provenance) {
                     reduction_result = surfel_mem_array(
                         std::make_shared<surfel_vector>(surfel_vector()),
@@ -1108,7 +1108,7 @@ void bvh::thread_create_lod(const uint32_t start_marker, const uint32_t end_mark
             {
                 std::vector<reduction_strategy_provenance::LoDMetaData> deviations;
                 reduction_result = cast->create_lod(reduction_error, input_mem_arrays, deviations, max_surfels_per_node_, (*this), get_child_id(current_node->node_id(), 0));
-                //cast->output_lod(deviations, node_index);
+                cast->output_lod(deviations, node_index);
             }
             else
             {
@@ -1137,7 +1137,6 @@ void bvh::thread_create_lod(const uint32_t start_marker, const uint32_t end_mark
                 }
             }
         }
-
         node_index = working_queue_head_counter_.increment_head();
     }
 }
@@ -1189,18 +1188,20 @@ void bvh::thread_compute_attributes(const uint32_t start_marker, const uint32_t 
                                     const radius_computation_strategy &radius_strategy, const bool is_leaf_level)
 {
     uint32_t node_index = working_queue_head_counter_.increment_head();
-
     uint16_t percentage = 0;
+    uint16_t timer = 0;
     uint32_t length_of_level = (end_marker - start_marker) + 1;
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
     while(node_index < end_marker)
     {
+        // std::cout << node_index << std::endl;
         bvh_node *current_node = &nodes_.at(node_index);
 
         // Calculate and set node properties.
         if(is_leaf_level)
         {
-            uint16_t number_of_neighbours = 100;
+            uint16_t number_of_neighbours = 10;
             auto normal_comp_algo = normal_computation_plane_fitting(number_of_neighbours);
             auto radius_comp_algo = radius_computation_average_distance(number_of_neighbours, 1.0f);
             compute_normal_and_radius(current_node, normal_comp_algo, radius_comp_algo);
@@ -1213,10 +1214,15 @@ void bvh::thread_compute_attributes(const uint32_t start_marker, const uint32_t 
         if(update_percentage)
         {
             uint16_t new_percentage = int32_t(float(node_index - start_marker) / (length_of_level)*100);
-            if(percentage < new_percentage)
+            std::chrono::steady_clock::time_point proc = std::chrono::steady_clock::now();
+            uint16_t new_timer = uint16_t(std::chrono::duration_cast<std::chrono::seconds>(proc - start).count());
+            if((percentage < new_percentage) && (timer < new_timer))
             {
                 percentage = new_percentage;
-                std::cout << "\r" << percentage << "% processed" << std::flush;
+                std::cout << "\r" << percentage << "% processed, " << std::flush;
+                timer = new_timer;
+                std::cout << timer << " Sekunden" << std::endl;
+                
             }
         }
         node_index = working_queue_head_counter_.increment_head();
@@ -1233,7 +1239,8 @@ void bvh::thread_compute_bounding_boxes_downsweep(const uint32_t slice_left, con
     uint32_t local_start_index = slice_left + thread_idx * num_slices_per_thread;
     uint32_t local_end_index = slice_left + (thread_idx + 1) * num_slices_per_thread;
 
-    for(uint32_t slice_index = local_start_index; num_slices_per_thread < local_end_index; ++slice_index)
+    //for(uint32_t slice_index = local_start_index; num_slices_per_thread < local_end_index; ++slice_index)
+    for(uint32_t slice_index = local_start_index; slice_index < local_end_index; ++slice_index)
     {
         // early termination if number of nodes could not be evenly divided
         if(slice_index > slice_right)
@@ -1247,6 +1254,8 @@ void bvh::thread_compute_bounding_boxes_downsweep(const uint32_t slice_left, con
         current_node.set_centroid(props.centroid);
         current_node.set_bounding_box(props.bbox);
         current_node.set_max_surfel_radius_deviation(props.max_radius_deviation);
+
+        // std::cout << current_node.get_bounding_box().get_center();
     }
 }
 
@@ -1262,7 +1271,6 @@ void bvh::thread_compute_bounding_boxes_upsweep(const uint32_t start_marker, con
 
     for(uint32_t node_index = local_start_index; node_index < local_end_index; ++node_index)
     {
-        // early termination if number of nodes could not be evenly divided
         if(node_index >= end_marker)
         {
             break;
@@ -1406,13 +1414,11 @@ void bvh::thread_split_node_jobs(size_t &slice_left, size_t &slice_right, size_t
 void bvh::upsweep(const reduction_strategy &reduction_strgy, const normal_computation_strategy &normal_strategy, const radius_computation_strategy &radius_strategy, bool recompute_leaf_level,
                   bool resample)
 {
-
-    
     uint64_t num_nodes_with_provenance = 0;
     for (const auto& node : nodes_) {
       if (node.has_provenance()) {
-        ++num_nodes_with_provenance;
-      }
+            ++num_nodes_with_provenance;
+        }
     }
     if (num_nodes_with_provenance > 0) {
         LOGGER_TRACE("Upsweep: provenance disk arrays found");
@@ -1447,15 +1453,14 @@ void bvh::upsweep(const reduction_strategy &reduction_strgy, const normal_comput
         uint32_t first_node_of_level = get_first_node_id_of_depth(level);
         uint32_t last_node_of_level = get_first_node_id_of_depth(level) + get_length_of_depth(level);
 
-
         // Loading is not thread-safe, so load everything before starting parallel operations.
         for(uint32_t node_index = first_node_of_level; node_index < last_node_of_level; ++node_index)
-        {
+            {
             bvh_node *current_node = &nodes_.at(node_index);
             // if necessary, load leaf-level nodes from disk
             if(level == int32_t(depth_) && current_node->is_out_of_core())
-            {
-                current_node->load_from_disk();   
+                {
+                current_node->load_from_disk();
             }
         }
 
@@ -1469,12 +1474,11 @@ void bvh::upsweep(const reduction_strategy &reduction_strgy, const normal_comput
         // skip the leaf level attribute computation if it was not requested or necessary
         if((level != int32_t(depth_) || recompute_leaf_level))
         {
-            spawn_compute_attribute_jobs(first_node_of_level, last_node_of_level, normal_strategy, radius_strategy, false);
+            spawn_compute_attribute_jobs(first_node_of_level, last_node_of_level, normal_strategy, radius_strategy, recompute_leaf_level);
         }
 
         spawn_compute_bounding_boxes_upsweep_jobs(first_node_of_level, last_node_of_level, level);
 
-        std::cout << std::endl;
 
         real mean_radius_sd = 0.0;
         unsigned counter = 1;
@@ -1500,55 +1504,53 @@ void bvh::upsweep(const reduction_strategy &reduction_strgy, const normal_comput
             }
         }
         mean_radius_sd = mean_radius_sd / counter;
-        std::cout << "average radius deviation pro level: " << mean_radius_sd << "\n";
+        std::cout << "average radius deviation (level " << level << "): " << mean_radius_sd << "\n\n";
     }
 
     // TODO: Inject a call to provenance method, collecting level data into one file
-    /*
+
     reduction_strategy *p_reduction_strgy = (reduction_strategy *)&reduction_strgy;
     if(reduction_strategy_provenance *cast = dynamic_cast<reduction_strategy_provenance *>(p_reduction_strgy))
     {
-        uint16_t w_level = 0;
+        size_t total_nodes = 0;
+        uint64_t total_meta_bytes = 0;
 
-        while(w_level <= depth_)
+        // Für jedes Level von 0 bis depth_
+        for(uint16_t w_level = 0; w_level <= depth_; ++w_level)
         {
-            std::cout << "Entering w_level: " << w_level << std::endl;
-
             const uint32_t first_node_of_level = get_first_node_id_of_depth(w_level);
-            const uint32_t last_node_of_level = get_first_node_id_of_depth(w_level) + get_length_of_depth(w_level) - 1;
+            const uint32_t last_node_of_level = first_node_of_level + get_length_of_depth(w_level) - 1;
+            size_t nodes_on_level = last_node_of_level - first_node_of_level + 1;
 
-            uint16_t percentage = 0;
+            std::cout << "Packing provenance data for level: " << w_level << " (nodes on this level: " << nodes_on_level << ")" << std::endl;
 
-            uint32_t w_node = first_node_of_level;
-
-            while(w_node <= last_node_of_level)
+            for(uint32_t w_node = first_node_of_level; w_node <= last_node_of_level; ++w_node)
             {
-                // std::cout << "Entering w_node: " << w_node << std::endl;
-
                 if(w_level < depth_)
                 {
                     bvh_node *current_node = &nodes_.at(w_node);
-                    cast->pack_node(w_node, max_surfels_per_node_, (*current_node).disk_array().length());
+                    size_t registered_surfels = current_node->disk_array().length();
+
+                    // Die Bytes werden nur für die Log-Ausgabe berechnet
+                    const size_t bytes_per_surfel = 6 * sizeof(float);
+                    uint64_t registered_bytes = registered_surfels * bytes_per_surfel;
+                    total_meta_bytes += registered_bytes;
+
+                    cast->pack_node(w_node, max_surfels_per_node_, registered_surfels);
                 }
                 else
                 {
                     cast->pack_empties(max_surfels_per_node_);
+                    total_meta_bytes += max_surfels_per_node_ * 6 * sizeof(float);
                 }
-
-                w_node++;
+                ++total_nodes;
             }
-
-            uint16_t new_percentage = (uint16_t)int16_t(float(w_level) / (depth_)*100);
-            if(percentage < new_percentage)
-            {
-                percentage = new_percentage;
-                std::cout << "\r" << percentage << "% processed" << std::flush;
-            }
-
-            w_level++;
         }
+        // Detaillierte finale Ausgabe
+        std::cout << "\nFinished packing provenance data." << std::endl;
+        std::cout << "Total nodes processed across all levels: " << total_nodes << "\n"
+                  << "Estimated total Meta-file size: " << (total_meta_bytes / 1024.0) << " KiB (" << total_meta_bytes << " bytes)" << std::endl;
     }
-    */
 
     state_ = state_type::after_upsweep;
 }
@@ -1556,7 +1558,7 @@ void bvh::upsweep(const reduction_strategy &reduction_strgy, const normal_comput
 void bvh::resample()
 {
     uint32_t first_node_of_level = get_first_node_id_of_depth(depth_);
-    uint32_t last_node_of_level = get_first_node_id_of_depth(depth_) + get_length_of_depth(depth_);
+    uint32_t last_node_of_level = first_node_of_level + get_length_of_depth(depth_);
 
     // Loading is not thread-safe, so load everything before starting parallel operations.
     for(uint32_t node_index = first_node_of_level; node_index < last_node_of_level; ++node_index)
@@ -1569,7 +1571,8 @@ void bvh::resample()
         }
     }
 
-    uint16_t number_of_neighbours = 175;
+    //uint16_t number_of_neighbours = 175;
+    uint16_t number_of_neighbours = 25;
     auto normal_comp_algo = normal_computation_plane_fitting(number_of_neighbours);
     auto radius_comp_algo = radius_computation_average_distance(number_of_neighbours, 1.0f);
     spawn_compute_attribute_jobs(first_node_of_level, last_node_of_level, normal_comp_algo, radius_comp_algo, false);
