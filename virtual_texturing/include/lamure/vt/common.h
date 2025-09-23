@@ -14,6 +14,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <string>
 
 #if WIN32
 #ifndef VT_BUILD_STATIC

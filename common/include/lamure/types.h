@@ -9,6 +9,7 @@
 #define COMMON_TYPES_H_
 
 #include <scm/core/math/math.h>
+#include <chrono>
 
 namespace lamure {
 

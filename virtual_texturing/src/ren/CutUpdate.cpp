@@ -7,6 +7,7 @@
 
 #include <lamure/vt/ren/CutDatabase.h>
 #include <lamure/vt/ren/CutUpdate.h>
+#include <chrono>
 
 namespace vt
 {

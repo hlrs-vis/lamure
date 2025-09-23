@@ -6,6 +6,7 @@
 // http://www.uni-weimar.de/medien/vr
 
 #include <lamure/vt/ooc/TileCache.h>
+#include <chrono>
 
 namespace vt {
     namespace ooc {
