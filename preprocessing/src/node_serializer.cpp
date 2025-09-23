@@ -8,7 +8,9 @@
 #include <lamure/pre/node_serializer.h>
 #include <lamure/pre/serialized_surfel.h>
 #include <cstring>
+#ifdef WIN32
 #include <windows.h>
+#endif
 #include <psapi.h>
 
 namespace lamure
