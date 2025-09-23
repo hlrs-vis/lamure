@@ -173,7 +173,9 @@ ENDIF (MSVC)
 include (FindZLIB)
 
 include(FindGLEW)
-
+include(find_e57)
+find_package(OpenSceneGraph)
+find_package(xerces)
 ############################################################
 # Build 3rd-party
 

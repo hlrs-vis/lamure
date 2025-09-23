@@ -2,10 +2,15 @@
 # search paths
 ##############################################################################
 SET(E57_INCLUDE_SEARCH_DIRS
+  ${EXTERNLIBS}/e57/include
+  /data/extern_libs/rhel9/e57/include
   ${GLOBAL_EXT_DIR}/e57/include/e57
 )
 
 SET(E57_LIBRARY_SEARCH_DIRS
+  ${EXTERNLIBS}/e57/lib
+  ${EXTERNLIBS}/e57
+  /data/extern_libs/rhel9/e57/lib
   ${GLOBAL_EXT_DIR}/e57/lib
 )
 
@@ -26,9 +31,9 @@ FOREACH (_SEARCH_DIR ${E57_LIBRARY_SEARCH_DIRS})
     ENDIF ()
 ENDFOREACH()
 
-find_path(E57_INCLUDE_DIR NAMES E57Foundation.h E57Simple.h constants.h basictypes.h gnss_error.h time_conversion.h PATHS ${E57_INCLUDE_SEARCH_DIRS})
+find_path(E57_INCLUDE_DIR NAMES e57/E57Foundation.h PATHS ${E57_INCLUDE_SEARCH_DIRS})
 
-find_library(E57_LIBRARY NAMES E57RefImpl.lib E57RefImpl-d.lib ${E57_LIBRARY_FILENAMES} PATHS ${E57_LIBRARY_SEARCH_DIRS})
+find_library(E57_LIBRARY NAMES libE57RefImpl.a libE57RefImpl E57RefImpl libE57RefImpl.a E57RefImpl.lib E57RefImpl-d.lib PATHS ${E57_LIBRARY_SEARCH_DIRS})
 
 ##############################################################################
 # verify
@@ -36,5 +41,7 @@ find_library(E57_LIBRARY NAMES E57RefImpl.lib E57RefImpl-d.lib ${E57_LIBRARY_FIL
 IF ( E57_INCLUDE_DIR AND E57_LIBRARY)
   MESSAGE(STATUS "--  found matching e57 version")
 ELSE()
+  MESSAGE(${E57_INCLUDE_DIR})
+  MESSAGE(${E57_LIBRARY})
   MESSAGE(FATAL_ERROR "find_e57.cmake: unable to find e57 library.")
 ENDIF ()

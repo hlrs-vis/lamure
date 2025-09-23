@@ -11,8 +11,9 @@ include_directories(${REND_INCLUDE_DIR}
                     ${GMP_INCLUDE_DIR}
                     ${MPFR_INCLUDE_DIR}
                     ${E57RefImpl_INCLUDE_DIR}
-                    ${OSG_INCLUDE_DIR}
-                    ${XERCES_INCLUDE_DIR})
+                    #${OSG_INCLUDE_DIR}
+                    #${XERCES_INCLUDE_DIR})
+ )
 
 include_directories(SYSTEM ${SCHISM_INCLUDE_DIRS}
 						   ${Boost_INCLUDE_DIR})
@@ -23,6 +24,7 @@ InitApp(${CMAKE_PROJECT_NAME}_e57_converter)
 ############################################################
 # Libraries
 
+IF(MSVC)
 target_link_libraries(${PROJECT_NAME}
         ${PROJECT_LIBS}
         ${COMMON_LIBRARY}
@@ -32,3 +34,12 @@ target_link_libraries(${PROJECT_NAME}
         optimized ${OSG_LIBRARY_RELEASE} debug ${OSG_LIBRARY_DEBUG}
         optimized ${XERCES_LIBRARY_RELEASE} debug ${XERCES_LIBRARY_DEBUG}
         )
+ELSE(MSVC)
+target_link_libraries(${PROJECT_NAME}
+        ${PROJECT_LIBS}
+        ${COMMON_LIBRARY}
+        ${PREPROC_LIBRARY}
+        optimized ${Boost_THREAD_LIBRARY_RELEASE}
+        optimized ${E57_LIBRARY}
+        )
+ENDIF(MSVC)

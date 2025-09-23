@@ -2,12 +2,15 @@
 # search paths
 ##############################################################################
 SET(OSG_INCLUDE_SEARCH_DIRS
-  ${GLOBAL_EXT_DIR}/OpenSceneGraph/lib
-  ${GLOBAL_EXT_DIR}/OpenSceneGraph/bin
+  ${EXTERNLIBS}/OpenSceneGraph/include
+  ${GLOBAL_EXT_DIR}/OpenSceneGraph/include
 )
 
 SET(OSG_LIBRARY_SEARCH_DIRS
-  ${GLOBAL_EXT_DIR}/OpenSceneGraph/include
+  ${EXTERNLIBS}/OpenSceneGraph/lib
+  ${EXTERNLIBS}/OpenSceneGraph/bin
+  ${GLOBAL_EXT_DIR}/OpenSceneGraph/lib
+  ${GLOBAL_EXT_DIR}/OpenSceneGraph/bin
 )
 
 ##############################################################################

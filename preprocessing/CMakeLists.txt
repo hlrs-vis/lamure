@@ -40,8 +40,8 @@ include_directories(${PROJECT_INCLUDE_DIR}
         ${GMP_INCLUDE_DIR}
         ${MPFR_INCLUDE_DIR}
         ${E57RefImpl_INCLUDE_DIR}
-        ${OSG_INCLUDE_DIR}
-        ${XERCES_INCLUDE_DIR}
+        #${OSG_INCLUDE_DIR}
+        #${XERCES_INCLUDE_DIR}
         )
 
 include_directories(SYSTEM ${SCHISM_INCLUDE_DIRS}
