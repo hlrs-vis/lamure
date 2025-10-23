@@ -73,7 +73,7 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
 
     try
     {
-        // --- E57 öffnen und Metadaten ausgeben ---
+        // open E57 and get metadata
         e57::Reader reader(file.c_str());
         e57::E57Root root;
         reader.GetE57Root(root);
@@ -85,15 +85,14 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
         int data3DCount = reader.GetData3DCount();
         std::cout << "Data3DCount:      " << data3DCount << "\n";
 
-        // Container für erste/letzte 5 Surfels
         std::vector<surfel> firstSurfels;
         std::deque<surfel> lastSurfels;
         size_t surfelCount = 0;
 
-        // Für jeden Scan
+        // iterate scans
         for(int scanIndex = 0; scanIndex < data3DCount; ++scanIndex)
         {
-            // Header lesen und Feld-Verfügbarkeit prüfen
+            // read header and get availability
             e57::Data3D header;
             reader.ReadData3D(scanIndex, header);
 
@@ -104,7 +103,7 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
             bool hasColorGreen = header.pointFields.colorGreenField;
             bool hasColorBlue = header.pointFields.colorBlueField;
 
-            // Pose
+            // position and orientation
             osg::Matrix trans, rot;
             trans.makeTranslate(header.pose.translation.x, header.pose.translation.y, header.pose.translation.z);
             rot.makeRotate(osg::Quat(header.pose.rotation.x, header.pose.rotation.y, header.pose.rotation.z, header.pose.rotation.w));
@@ -118,13 +117,13 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
             std::cout << "Rotation (quat): (" << header.pose.rotation.x << ", " << header.pose.rotation.y << ", " << header.pose.rotation.z << ", " << header.pose.rotation.w << ")\n\n";
             std::cout << "====================\n\n";
 
-            // Buffer-Größen ermitteln
+            // buffer size
             int64_t nRows, nCols, nPointsSize, nGroupsSize, nCountSize;
             bool bColumnIndex = false;
             reader.GetData3DSizes(scanIndex, nRows, nCols, nPointsSize, nGroupsSize, nCountSize, bColumnIndex);
             int64_t chunkSize = (nRows > 0 ? nRows : 1024);
 
-            // Buffer anlegen
+            // buffer
             std::vector<int8_t> isInvalid(chunkSize, 0);
             std::vector<double> xData, yData, zData;
             std::vector<double> rangeData, azData, elData, intData;
@@ -165,13 +164,13 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
                 blueRange = header.colorLimits.colorBlueMaximum - blueOffset;
             }
 
-            // Komprimierten Leser aufsetzen
+            // compressed reader 
             e57::CompressedVectorReader dataReader = reader.SetUpData3DPointsData(
                 scanIndex, chunkSize, hasCartesian ? xData.data() : nullptr, hasCartesian ? yData.data() : nullptr, hasCartesian ? zData.data() : nullptr, isInvalid.data(),
                 hasIntensity ? intData.data() : nullptr, nullptr, hasColorRed ? redData.data() : nullptr, hasColorGreen ? greenData.data() : nullptr, hasColorBlue ? blueData.data() : nullptr, nullptr,
                 hasSpherical ? rangeData.data() : nullptr, hasSpherical ? azData.data() : nullptr, hasSpherical ? elData.data() : nullptr);
 
-            // Punkte auslesen
+            // read points
             size_t sz = 0;
             while((sz = dataReader.read()) > 0)
             {
@@ -180,7 +179,7 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
                     if(isInvalid[i] != 0)
                         continue;
 
-                    // Position berechnen
+                    // Position
                     osg::Vec3 p;
                     if(hasCartesian)
                     {
@@ -192,7 +191,7 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
                     }
                     p = p * m;
 
-                    // Surfel zusammenbauen
+                    // Build Surfel
                     lamure::vec3r pos(p[0], p[1], p[2]);
                     lamure::vec3b col(0, 0, 0);
                     double intensity_value = 0.0;
@@ -201,18 +200,41 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
                     {
                         intensity_value = (intData[i] - intOffset) / intRange;
                     }
-                    if(hasColorRed)
-                        col.r = static_cast<uint8_t>(round((redData[i] - redOffset) * 255.0 / redRange));
-                    if(hasColorGreen)
-                        col.g = static_cast<uint8_t>(round((greenData[i] - greenOffset) * 255.0 / greenRange));
-                    if(hasColorBlue)
-                        col.b = static_cast<uint8_t>(round((blueData[i] - blueOffset) * 255.0 / blueRange));
 
-                    // Hier Surfel-Konstruktor anpassen, falls dein Typ andere Parameter erwartet
+                    bool hasAnyColor = hasColorRed || hasColorGreen || hasColorBlue;
+
+                    if(hasAnyColor)
+                    {
+                        if(hasColorRed)
+                            col.r = static_cast<uint8_t>(round((redData[i] - redOffset) * 255.0 / redRange));
+                        if(hasColorGreen)
+                            col.g = static_cast<uint8_t>(round((greenData[i] - greenOffset) * 255.0 / greenRange));
+                        if(hasColorBlue)
+                            col.b = static_cast<uint8_t>(round((blueData[i] - blueOffset) * 255.0 / blueRange));
+                    }
+                    else // No color data
+                    {
+                        if(hasIntensity)
+                        {
+                            // Use intensity for grayscale
+                            uint8_t gray = static_cast<uint8_t>(round(intensity_value * 255.0));
+                            col.r = gray;
+                            col.g = gray;
+                            col.b = gray;
+                        }
+                        else
+                        {
+                            // Use fallback color
+                            uint8_t fallback_gray = static_cast<uint8_t>(round(0.7 * 255.0));
+                            col.r = fallback_gray;
+                            col.g = fallback_gray;
+                            col.b = fallback_gray;
+                        }
+                    }
+
                     surfel s(pos, col, intensity_value);
                     callback(s);
 
-                    // Für erste/letzte 5 sammeln
                     if(surfelCount < 5)
                     {
                         firstSurfels.push_back(s);
@@ -230,7 +252,6 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
 
         reader.Close();
 
-        // Ausgabe der ersten/letzten 5 Surfels
         auto print_surfel = [&](const surfel &s)
         {
             std::cout << "Position(" << s.pos()[0] << ", " << s.pos()[1] << ", " << s.pos()[2] << ")";

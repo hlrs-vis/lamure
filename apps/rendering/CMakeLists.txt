@@ -6,7 +6,7 @@ link_directories(${SCHISM_LIBRARY_DIRS})
 include_directories(${REND_INCLUDE_DIR}
                     ${COMMON_INCLUDE_DIR}
                     ${PVS_COMMON_INCLUDE_DIR}
-                    ${GLUT_INCLUDE_DIR}
+                    ${FREEGLUT_INCLUDE_DIR}
 		                ${GLM_INCLUDE_DIR}
                     ${FREEIMAGE_INCLUDE_DIR}
 	            ${LAMURE_CONFIG_DIR})
@@ -24,7 +24,7 @@ target_link_libraries(${PROJECT_NAME}
     ${REND_LIBRARY}
     ${PVS_COMMON_LIBRARY}
     ${OpenGL_LIBRARIES} 
-    ${GLUT_glut_LIBRARY}
+    ${FREEGLUT_LIBRARY}
     optimized ${SCHISM_CORE_LIBRARY} debug ${SCHISM_CORE_LIBRARY_DEBUG}
     optimized ${SCHISM_GL_CORE_LIBRARY} debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
     optimized ${SCHISM_GL_UTIL_LIBRARY} debug ${SCHISM_GL_UTIL_LIBRARY_DEBUG}

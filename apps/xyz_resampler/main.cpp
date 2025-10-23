@@ -125,7 +125,6 @@ int main(int argc, const char *argv[])
 
         lamure::pre::format_factory f;
         f[".xyz"] = &lamure::pre::create_format_instance<lamure::pre::format_xyz>;
-        f[".xyz_all"] = &lamure::pre::create_format_instance<lamure::pre::format_xyzall>;
         f[".ply"] = &lamure::pre::create_format_instance<lamure::pre::format_ply>;
         f[".bin"] = &lamure::pre::create_format_instance<lamure::pre::format_bin>;
 

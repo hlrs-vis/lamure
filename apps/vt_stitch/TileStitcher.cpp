@@ -71,7 +71,7 @@ bool TileStitcher::stitch()
 
 void TileStitcher::extract_tile_information()
 {
-    fs::path first_tile_path;
+    boost::filesystem::path first_tile_path;
     first_tile_path += get_path(0, 0);
     auto first_tile_file = load_and_convert_tile(first_tile_path.string());
 
@@ -79,7 +79,7 @@ void TileStitcher::extract_tile_information()
     standard_tile_height = FreeImage_GetHeight(first_tile_file);
     FreeImage_Unload(first_tile_file);
 
-    fs::path last_tile_path;
+    boost::filesystem::path last_tile_path;
     last_tile_path += get_path((int)(tiles_per_row - 1), (int)(tiles_per_column - 1));
 
     auto last_tile_file = load_and_convert_tile(last_tile_path.string());
@@ -89,9 +89,9 @@ void TileStitcher::extract_tile_information()
     FreeImage_Unload(last_tile_file);
 }
 
-std::experimental::filesystem::path TileStitcher::get_path(int x, int y) const
+boost::filesystem::path TileStitcher::get_path(int x, int y) const
 {
-    fs::path file;
+    boost::filesystem::path file;
     file += in_dir;
     file.append(std::to_string(x) + "_" + std::to_string(y) + ".jpeg");
     return file;

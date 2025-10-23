@@ -68,13 +68,10 @@ int main(int argc, const char *argv[])
     po::positional_options_description pod;
     po::options_description od_hidden("hidden");
     po::options_description od_cmd("cmd");
-    po::options_description od("Usage: " + exec_name +
-                               " [OPTION]... -i INPUT... -o OUTPUT\n\n"
-                               "Modi automatisch erkennen:\n"
-                               "  - Convert: INPUT / (INPUT_DIR + EXT) + OUTPUT / (OUTPUT_DIR + EXT)\n"
-                               "  - Merge:   INPUT_DIR + OUTPUT\n"
-                               "  - Batch:   INPUT_DIR + OUTPUT_DIR (+ EXT)\n"
-                               "  - Build:   1 Input .bin/.bin_all + Output-Verzeichnis\n\n");
+    po::options_description od("Usage: " + exec_name + " -i INPUT -o OUTPUT [OPTIONS]\n\n"
+                               "  - Convert:  -c   -i INPUT | (-i INPUT_DIR + -x EXT) + -o OUTPUT | (-o OUTPUT_DIR + -y EXT)\n"
+                               "  - Merge:    -m   -i INPUT | (-i INPUT_DIR + -x EXT) + -o OUTPUT | (-o OUTPUT_DIR + -y EXT)\n"
+                               "  - Build:         -i INPUT | (-i INPUT_DIR + -x EXT) + -o OUTPUT_DIR  [OPTIONS]\n\n");
     try
     {
         od.add_options()
@@ -84,16 +81,16 @@ int main(int argc, const char *argv[])
             ("input,i", po::value<std::vector<std::string>>()->composing()->required(), "input file(s) or directory")
             ("input-extension,x", po::value<std::string>(), "when input is a directory")
             ("output,o", po::value<std::string>()->required(), "output file or directory")
-            ("output-extension,y", po::value<std::string>(), "when output is a directory")
+            ("output-extension,y", po::value<std::string>(), "when output is a directory and not Build-Mode")
 
             ("final-stage,s", po::value<int>()->default_value(5),
              "number of the stage to stop after.\n"
-             "  0 - binary file creation\n"
-             "  1 - surfel + radius computation\n"
-             "  2 - downsweep/tree creation\n"
-             "  3 - statistical outlier removal\n"
-             "  4 - upsweep/LOD creation\n"
-             "  5 - serialization.\nmake sure the final stage number is equal or higher than the start stage, which is implicitly defined by INPUT")
+             "  1 - Conversion to intermediate binary format\n"
+             "  2 - Normal and radius computation\n"
+             "  3 - Downsweep (BVH creation, optional outlier removal)\n"
+             "  4 - Upsweep (LOD generation)\n"
+             "  5 - Final serialization to .bvh/.lod format.\n"
+             "make sure the final stage number is equal or higher than the start stage, which is implicitly defined by INPUT")
 
             ("max-fanout", po::value<int>()->default_value(2),
             "maximum fan-out factor for tree properties computation. "
@@ -180,16 +177,23 @@ int main(int argc, const char *argv[])
         {
             std::cout << od << std::endl;
             std::cout << "Build mode:\n"
-                         "  INPUT can be one with the following extensions:\n"
-                         "    .xyz, .xyz_all, .ply - stage 0: start from the beginning\n"
-                         "    .bin - stage 1: start from normal + radius computation und Downsweep\n"
-                         "    .kdnd - stage 3: start from upsweep/LOD creation\n"
-                         "    .kdnu - stage 4: start from serializer\n"
-                         "  last two stages require intermediate files to be present in the working directory (-k option).\n"
+                         "  The starting stage is determined by the INPUT file extension:\n"
+                         "    Stage 0 (.xyz, .xyz_all, .ply, .e57): From raw point cloud.\n"
+                         "    Stage 1 (.bin): Skips conversion. Starts with normal/radius computation.\n"
+                         "    Stage 2 (.bin_all, .bin_all_wo_outlier): Skips conversion and normal/radius computation. Starts with downsweep.\n"
+                         "    Stage 4 (.bvhd): Skips downsweep. Starts with upsweep.\n"
+                         "    Stage 5 (.bvhu): Skips upsweep. Starts with final serialization.\n"
+                         "  Intermediate files from previous runs must exist when starting from stages > 1 (e.g. using -k).\n"
+                         "  Example: /lamure_preprocessing.exe -i file1.e57 file2.e57 -o /out --final-stage 5 --max-fanout 2 -d 1024 -r --outlier-ratio 0.00001 --num-outlier-neighbours 24 --neighbours 16 -m 12.0 -t 20 --reduction-algo ndc --normal-computation-algo planefitting --radius-computation-algo naturalneighbours --radius-multiplier 1.0 --rep-radius-algo amean\n\n"
                          "Conversion mode (-c option):\n"
-                         "  INPUT: file in either .xyz, .e57 or .ply format\n"
-                         "  OUTPUT: file in either .bin or .bin_all format\n"
-                "  USAGE: " + exec_name + " file in .bin format\n\n";
+                         "  Converts one or more input files to a target format without building a BVH.\n"
+                         "  Supported input formats: .xyz, .xyz_all, .xyz_grey, .ply, .e57\n"
+                         "  Supported output formats: .bin, .bin_all, .bin_prov\n"
+                         "  Example: " + exec_name + " -c -i file.e57 -o file.bin\n\n"
+                         "Merge mode (-g option):\n"
+                         "  Merges multiple input files of the same type into a single output file (can convert also).\n"
+                         "  Example (multiple files): " + exec_name + " -g -i file1.e57 file2.e57 -o merged.bin\n"
+                         "  Example (directory): " + exec_name + " -g -i point_cloud_dir/ -x .e57 -o merged.bin\n\n";
             return EXIT_SUCCESS;
         }
 

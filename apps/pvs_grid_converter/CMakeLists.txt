@@ -1,13 +1,14 @@
 ############################################################
 # CMake Build Script for the pvs_grid_converter executable
 
+# Falls du (noch) keine imported targets für SCHISM hast, einmal setzen:
 link_directories(${SCHISM_LIBRARY_DIRS})
 
 include_directories(${PVS_COMMON_INCLUDE_DIR}
                     ${PVS_PREPROCESSING_INCLUDE_DIR}
                     ${REND_INCLUDE_DIR}
                     ${COMMON_INCLUDE_DIR}
-                    ${GLUT_INCLUDE_DIR}
+                    ${FREEGLUT_INCLUDE_DIR}
                     ${FREEIMAGE_INCLUDE_DIR}
 			        ${LAMURE_CONFIG_DIR})
 
@@ -27,11 +28,11 @@ target_link_libraries(${PROJECT_NAME}
     ${PVS_PREPROCESSING_LIBRARY}
     ${REND_LIBRARY}
     ${OpenGL_LIBRARIES} 
-    ${GLUT_LIBRARY}
+    ${FREEGLUT_LIBRARY}
     optimized ${SCHISM_CORE_LIBRARY} debug ${SCHISM_CORE_LIBRARY_DEBUG}
     optimized ${SCHISM_GL_CORE_LIBRARY} debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
     optimized ${SCHISM_GL_UTIL_LIBRARY} debug ${SCHISM_GL_UTIL_LIBRARY_DEBUG}
-    )
+)
 
 add_dependencies(${PROJECT_NAME} lamure_pvs_preprocessing lamure_common)
 
