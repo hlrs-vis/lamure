@@ -65,6 +65,9 @@ target_link_libraries(${PROJECT_NAME}
   optimized ${SCHISM_GL_UTIL_LIBRARY}
   optimized ${SCHISM_GL_CORE_LIBRARY}
   optimized ${Boost_REGEX_LIBRARY_RELEASE}
+${OSG_LIBRARIES}
+    ${E57_LIBRARY}
+    ${XERCESC_LIBRARIES}
 )
 ENDIF(MSVC)
 

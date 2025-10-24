@@ -34,7 +34,10 @@ target_link_libraries(${PROJECT_NAME}
     optimized ${SCHISM_CORE_LIBRARY} debug ${SCHISM_CORE_LIBRARY_DEBUG}
     optimized ${SCHISM_GL_CORE_LIBRARY} debug ${SCHISM_GL_CORE_LIBRARY_DEBUG}
     optimized ${SCHISM_GL_UTIL_LIBRARY} debug ${SCHISM_GL_UTIL_LIBRARY_DEBUG}
-)
+${OSG_LIBRARIES}
+    ${E57_LIBRARY}
+    ${XERCESC_LIBRARIES}
+    )
 
 add_dependencies(${PROJECT_NAME} lamure_pvs_preprocessing lamure_common)
 

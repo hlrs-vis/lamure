@@ -23,5 +23,8 @@ target_link_libraries(${PROJECT_NAME}
     ${GLUT_LIBRARY}
     optimized ${SCHISM_CORE_LIBRARY} #debug ${SCHISM_CORE_LIBRARY_DEBUG}
     ${OPENGL_glx_LIBRARY}
+${OSG_LIBRARIES}
+    ${E57_LIBRARY}
+    ${XERCESC_LIBRARIES}
     )
 

@@ -10,9 +10,9 @@ include_directories(${REND_INCLUDE_DIR}
                     ${CGAL_INCLUDE_DIR}
                     ${GMP_INCLUDE_DIR}
                     ${MPFR_INCLUDE_DIR}
-                    ${E57RefImpl_INCLUDE_DIR}
-                    #${OSG_INCLUDE_DIR}
-                    #${XERCES_INCLUDE_DIR})
+                    ${E57_INCLUDE_DIR}
+                    ${OSG_INCLUDE_DIR}
+                    ${XERCES_INCLUDE_DIR}
  )
 
 include_directories(SYSTEM ${SCHISM_INCLUDE_DIRS}
@@ -39,6 +39,8 @@ target_link_libraries(${PROJECT_NAME}
         ${PROJECT_LIBS}
         ${COMMON_LIBRARY}
         ${PREPROC_LIBRARY}
+        ${OSG_LIBRARIES}
+        ${XERCESC_LIBRARIES}
         optimized ${Boost_THREAD_LIBRARY_RELEASE}
         optimized ${E57_LIBRARY}
         )

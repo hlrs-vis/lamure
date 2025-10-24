@@ -174,8 +174,8 @@ include (FindZLIB)
 
 include(FindGLEW)
 include(find_e57)
-find_package(OpenSceneGraph)
-find_package(xerces)
+find_package(OpenSceneGraph 3.2.0 COMPONENTS osgDB osgUtil osgViewer osgParticle osgText osgSim osgGA osgFX osgTerrain osgShadow REQUIRED)
+find_package(XERCESC)
 ############################################################
 # Build 3rd-party
 

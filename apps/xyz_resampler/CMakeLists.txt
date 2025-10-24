@@ -1,5 +1,6 @@
 ############################################################
 # CMake Build Script for the preprocessing executable
+return()
 
 include_directories(${PREPROC_INCLUDE_DIR} 
                     ${COMMON_INCLUDE_DIR})
@@ -19,6 +20,9 @@ target_link_libraries(${PROJECT_NAME}
     ${PREPROC_LIBRARY}
     ${OpenGL_LIBRARIES} 
     ${GLUT_LIBRARY}
+${OSG_LIBRARIES}
+    ${E57_LIBRARY}
+    ${XERCESC_LIBRARIES}
     )
 
 add_dependencies(${PROJECT_NAME} lamure_preprocessing lamure_common)

@@ -25,6 +25,9 @@ target_link_libraries(${PROJECT_NAME}
     ${PROJECT_LIBS}
     ${PVS_COMMON_LIBRARY}
     optimized ${SCHISM_CORE_LIBRARY} debug ${SCHISM_CORE_LIBRARY_DEBUG}
+${OSG_LIBRARIES}
+    ${E57_LIBRARY}
+    ${XERCESC_LIBRARIES}
     )
 
 add_dependencies(${PROJECT_NAME} lamure_pvs_common lamure_common)

@@ -28,6 +28,9 @@ target_link_libraries(${PROJECT_NAME}
     ${PREPROC_LIBRARY}
     ${OpenGL_LIBRARIES} 
     ${GLUT_LIBRARY}
+    ${E57_LIBRARY}
+    ${XERCESC_LIBRARIES}
+    ${OSG_LIBRARIES}
     optimized ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}
     )
 ENDIF(MSVC)

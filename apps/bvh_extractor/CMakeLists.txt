@@ -25,5 +25,8 @@ target_link_libraries(${PROJECT_NAME}
     ${OpenGL_LIBRARIES} 
     ${OPENGL_glx_LIBRARY} 
     ${GLUT_LIBRARY}
+${OSG_LIBRARIES}
+    ${E57_LIBRARY}
+    ${XERCESC_LIBRARIES}
     )
 

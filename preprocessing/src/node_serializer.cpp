@@ -10,8 +10,8 @@
 #include <cstring>
 #ifdef WIN32
 #include <windows.h>
-#endif
 #include <psapi.h>
+#endif
 
 namespace lamure
 {
@@ -185,12 +185,12 @@ write_node_streamed(const bvh_node &node)
 
 size_t get_current_rss()
 {
-    PROCESS_MEMORY_COUNTERS pmc;
+   /* PROCESS_MEMORY_COUNTERS pmc;
     if(GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc)))
     {
         // pmc.WorkingSetSize in Bytes
         return pmc.WorkingSetSize / 1024 / 1024; // in MiB
-    }
+    }*/
     return 0;
 }
 
