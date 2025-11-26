@@ -40,6 +40,8 @@ target_link_libraries(${PROJECT_NAME}
 ${OSG_LIBRARIES}
     ${E57_LIBRARY}
     ${XERCESC_LIBRARIES}
+    ${GLUT_LIBRARY}
+    ${GLUT_glut_LIBRARY}
     )
 
 add_dependencies(${PROJECT_NAME} lamure_pvs_preprocessing lamure_common)
