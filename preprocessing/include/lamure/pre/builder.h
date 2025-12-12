@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 Bauhaus-Universitaet Weimar
+// Copyright (c) 2014-2018 Bauhaus-Universitaet Weimar
 // This Software is distributed under the Modified BSD License, see license.txt.
 //
 // Virtual Reality and Visualization Research Group 
@@ -10,6 +10,7 @@
 
 #include <string>
 #include <ostream>
+#include <iomanip>
 #include <lamure/pre/platform.h>
 #include <lamure/pre/common.h>
 
@@ -53,6 +54,7 @@ public:
         reduction_algorithm reduction_algo;
         radius_computation_algorithm radius_computation_algo;
         normal_computation_algorithm normal_computation_algo;
+        std::string output_base_name;
     };
 
 
@@ -189,6 +191,7 @@ inline std::ostream &operator<<(std::ostream &os, builder::descriptor const &d)
 {
     os << "input_file:                   " << d.input_file << "\n"
        << "working_directory:            " << d.working_directory << "\n"
+       << "output_base_name:             " << d.output_base_name << "\n"
        << "prov_file:                    " << d.prov_file << "\n"
        << "max_fan_factor:               " << d.max_fan_factor << "\n"
        << "surfels_per_node:             " << d.surfels_per_node << "\n"
@@ -199,11 +202,11 @@ inline std::ostream &operator<<(std::ostream &os, builder::descriptor const &d)
        << "memory_budget (GB):           " << d.memory_budget << "\n"
        << "radius_multiplier:            " << d.radius_multiplier << "\n"
        << "buffer_size (bytes):          " << d.buffer_size << "\n"
-       << "max_threads:          " << d.max_threads << "\n"
+       << "max_threads:                  " << d.max_threads << "\n"
        << "number_of_neighbours:         " << d.number_of_neighbours << "\n"
        << "translate_to_origin:          " << (d.translate_to_origin ? "true" : "false") << "\n"
        << "number_of_outlier_neighbours: " << d.number_of_outlier_neighbours << "\n"
-       << "outlier_ratio:                " << d.outlier_ratio << "\n"
+       << "outlier_ratio:                " << std::setprecision(12) << d.outlier_ratio << std::defaultfloat << "\n"
        << "rep_radius_algo:              " << enum_to_string(d.rep_radius_algo) << "\n"
        << "reduction_algo:               " << enum_to_string(d.reduction_algo) << "\n"
        << "radius_computation_algo:      " << enum_to_string(d.radius_computation_algo) << "\n"

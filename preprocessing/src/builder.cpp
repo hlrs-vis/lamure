@@ -57,8 +57,10 @@ namespace pre
 builder::
 builder(const descriptor &desc)
     : desc_(desc), memory_limit_(calculate_memory_limit()) {
-    base_path_ = fs::path(desc_.working_directory)
-        / fs::path(desc_.input_file).stem().string();
+    std::string stem = desc_.output_base_name.empty() 
+                     ? fs::path(desc_.input_file).stem().string() 
+                     : desc_.output_base_name;
+    base_path_ = fs::path(desc_.working_directory) / stem;
 }
 
 builder::~builder()

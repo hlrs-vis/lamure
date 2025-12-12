@@ -36,7 +36,7 @@ static std::string normalize_ext(const std::string &e)
 enum class Mode
 {
     MERGE,            // >1 Input → Merge
-    CONVERT_ONLY,     // -c → nur Konvertieren/Mergen
+    CONVERT_ONLY,     // -c/-m → nur Konvertieren/Mergen
     BUILD_ONLY,       // genau 1 .bin/.bin_all + Dir → nur Bauen
     CONVERT_AND_BUILD // anderer Fall ohne -c → Konvertieren + Bauen
 };
@@ -55,6 +55,12 @@ struct Config
 
 int main(int argc, const char *argv[])
 {
+    std::string cmd_line;
+    if (argc > 0)
+        cmd_line += boost::filesystem::path(argv[0]).generic_string() + " ";
+    for(int i = 1; i < argc; ++i)
+        cmd_line += std::string(argv[i]) + " ";
+
     // Start timer and enable nested OpenMP
     auto start = std::chrono::steady_clock::now();
     omp_set_nested(1);
@@ -98,9 +104,12 @@ int main(int argc, const char *argv[])
             "number of surfels per node (option -d), so it might be less than "
             "provided value")
 
-            ("no-translate-to-origin", "do not translate surfels to origin. "
-            "If this option is set, the surfels in the input file will not be "
+            ("translate-to-origin", "translate surfels to origin. "
+            "If this option is set, the surfels in the input file will be "
             "translated to the root bounding box center.")
+
+            ("no-translate-to-origin", "deprecated: this is now the default behavior. "
+            "Do not translate surfels to origin.")
 
             ("desired,d", po::value<int>()->default_value(1024),
             "the application tries to achieve a number of surfels per node close to "
@@ -273,7 +282,7 @@ int main(int argc, const char *argv[])
     cfg.input_ext_hint = vm.count("input-extension") ? vm["input-extension"].as<std::string>() : "";
     cfg.output_ext_hint = vm.count("output-extension") ? vm["output-extension"].as<std::string>() : "";
     cfg.output = fs::absolute(vm["output"].as<std::string>());
-    cfg.output_is_dir = fs::exists(cfg.output) && fs::is_directory(cfg.output) || cfg.output.extension().string().empty();
+    cfg.output_is_dir = fs::exists(cfg.output) && fs::is_directory(cfg.output);
 
     // Inputs sammeln
     for(auto &s : vm["input"].as<std::vector<std::string>>())
@@ -349,7 +358,7 @@ int main(int argc, const char *argv[])
     desc.memory_budget = std::max(vm["memory-budget"].as<float>(), 1.0f);
     desc.buffer_size = buffer_size;
     desc.number_of_neighbours = std::max(vm["neighbours"].as<int>(), 1);
-    desc.translate_to_origin = !vm.count("no-translate-to-origin");
+    desc.translate_to_origin = vm.count("translate-to-origin");
     desc.outlier_ratio = std::max(0.0f, vm["outlier-ratio"].as<float>());
     desc.number_of_outlier_neighbours = std::max(vm["num-outlier-neighbours"].as<int>(), 1);
     desc.radius_multiplier = vm["radius-multiplier"].as<float>();
@@ -411,13 +420,27 @@ int main(int argc, const char *argv[])
     for(auto &conv_file : cfg.inputs)
     {
         desc.input_file = fs::canonical(conv_file).string();
-        fs::path filename = conv_file.filename();
-        desc.working_directory = cfg.output_is_dir ? fs::canonical(cfg.output).string() : fs::canonical(conv_file.parent_path()).string();
 
-        fs::path bvh_path = fs::path(desc.working_directory) / filename;
+        if (cfg.output_is_dir)
+        {
+            desc.working_directory = fs::canonical(cfg.output).string();
+            desc.output_base_name = "";
+        }
+        else
+        {
+            desc.working_directory = cfg.output.parent_path().string();
+            desc.output_base_name = cfg.output.stem().string();
+            if (!fs::exists(desc.working_directory))
+            {
+               fs::create_directories(desc.working_directory);
+            }
+        }
+
+        fs::path out_stem = desc.output_base_name.empty() ? conv_file.stem() : fs::path(desc.output_base_name);
+        fs::path bvh_path = fs::path(desc.working_directory) / out_stem;
         bvh_path.replace_extension(".bvh");
 
-        fs::path log_path = fs::path(desc.working_directory) / filename;
+        fs::path log_path = fs::path(desc.working_directory) / out_stem;
         log_path.replace_extension(".log");
 
         std::cout << bvh_path << std::endl;
@@ -443,6 +466,7 @@ int main(int argc, const char *argv[])
         std::ofstream log_file(log_path.string());
         if(log_file)
         {
+            log_file << "[Command]\n" << cmd_line << "\n\n";
             log_file << "[Build Configuration]\n" << desc << std::endl;
             log_file.close();
             std::cout << "[Log] " << log_path << "\n";
