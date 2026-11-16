@@ -180,7 +180,7 @@ void format_e57::read(const std::string &file, surfel_callback_function callback
                         continue;
 
                     // Position
-                    osg::Vec3 p;
+                    osg::Vec3d p;
                     if(hasCartesian)
                     {
                         p.set(xData[i], yData[i], zData[i]);
